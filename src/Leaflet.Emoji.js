@@ -81,10 +81,10 @@ L.Emoji = L.GeoJSON.extend({
       }
     }
     var values = [];
-    for (var x = 0; x < 400; x += 10) {
-      for (var y = 0; y < 800; y += 10) {
+    for (var y = 0; y < 800; y += 20) {
+      for (var x = 0; x < 400; x += 20) {
         // console.log(x, y)
-        var ll = this._map.containerPointToLatLng([x, y]);
+        var ll = this._map.containerPointToLatLng([x + 10, y + 10]);
         var value = null;
         for (var i = 0; i < polygonsInViewport.length; i++) {
           var layer = polygonsInViewport[i];
@@ -101,6 +101,8 @@ L.Emoji = L.GeoJSON.extend({
 
     console.timeEnd('test');
     console.log(values)
+
+    this._layer.setGrid(values)
   }
   //
   // _updatePosition: function(p) {
@@ -129,6 +131,14 @@ L.Control._EmojiStaticLayer = L.Control.extend({
     // .addListener(controlDiv, 'click', function () { MapShowCommand(); });
 
     return controlDiv;
+  },
+
+  setGrid(grid) {
+    console.log(this);
+    var str = grid.map(v => v === null ? '💩' : '😄').join('');
+    console.log(str)
+
+    this._container.innerHTML = str
   }
 });
 
