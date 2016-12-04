@@ -14,7 +14,11 @@ L.Emoji = L.Layer.extend({
     this._map = map;
 
     if (this.options.showGeoJSON) {
-      this._geoJSONLayer = L.geoJSON(this._geoJSON);
+      this._geoJSONLayer = L.geoJSON(this._geoJSON, {
+        style: function () {
+          return {color: 'rgba(50, 50, 50, 0.5)', weight: 1, fill: false};
+        }
+      });
       this._geoJSONLayer.addTo(this._map);
     }
 
