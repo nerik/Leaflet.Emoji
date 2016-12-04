@@ -2,7 +2,8 @@ L.Emoji = L.Layer.extend({
   options: {
     showGeoJSON: true,
     size: 18,
-    emoji: '❓'
+    emoji: '❓',
+    emptyEmoji: '💩'
   },
 
   initialize: function(geoJSON, options) {
@@ -86,22 +87,24 @@ L.Emoji = L.Layer.extend({
         polygonsInViewport.push(poly.feature);
       }
     }
+
     var values = [];
+    var getEmoji = this._getEmojiMethod();
+
     for (var y = 0; y < viewportHeight; y += size) {
       var line = [];
       for (var x = 0; x < viewportWidth; x += size) {
-        // console.log(x, y)
         var ll = this._map.containerPointToLatLng([x + size/2, y + size/2]);
-        var value = null;
+        var emoji = null;
         for (i = 0; i < polygonsInViewport.length; i++) {
           var feature = polygonsInViewport[i];
           var inside = turf.inside([ll.lng, ll.lat], feature);
+          emoji = getEmoji(feature, inside, this.options);
           if (inside === true) {
-            value = feature.properties.admin;
             break;
           }
         }
-        line.push(value);
+        line.push(emoji);
       }
       values.push(line);
     }
@@ -109,6 +112,14 @@ L.Emoji = L.Layer.extend({
     // console.log(values)
 
     this._layer.setGrid(values, viewportWidth, viewportHeight);
+  },
+
+  _getEmojiMethod() {
+    return this._getEmojiString;
+  },
+
+  _getEmojiString(feature, inPolygon, options) {
+    return (inPolygon) ? options.emoji : options.emptyEmoji;
   }
 
 });
@@ -146,9 +157,7 @@ var EmojiLayer = L.Layer.extend({
     this._el.style.height = h +  + 'px';
 
     this._grid = grid.map(line => {
-      return line.map(value => {
-        return value === null ? '💩' : '😄';
-      }).join('');
+      return line.join('');
     }).join('\n');
 
     this._el.innerHTML = this._grid;
