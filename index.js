@@ -19,7 +19,13 @@
         // console.log(payload)
         emoji = L.emoji(JSON.parse(payload), {
           showGeoJSON: true,
-          size: 18
+          size: 18,
+          emoji: function(feature) {
+            if (feature.properties.admin === 'France') {
+              return '🇫🇷';
+            }
+            return '🍉';
+          }
         }).addTo(map);
       });
 

@@ -115,11 +115,19 @@ L.Emoji = L.Layer.extend({
   },
 
   _getEmojiMethod() {
-    return this._getEmojiString;
+    if (typeof (this.options.emoji) === 'function') {
+      return this._getEmojiFunction;
+    } else {
+      return this._getEmojiString;
+    }
   },
 
   _getEmojiString(feature, inPolygon, options) {
     return (inPolygon) ? options.emoji : options.emptyEmoji;
+  },
+
+  _getEmojiFunction(feature, inPolygon, options) {
+    return options.emoji(feature);
   }
 
 });
