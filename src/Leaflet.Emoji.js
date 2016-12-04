@@ -49,7 +49,7 @@ L.Emoji = L.Layer.extend({
     this._setGrid();
   //
   //   map.on('viewreset', this._updatePosition, this);
-    map.on('moveend', this._getGrid, this);
+    map.on('moveend', this._setGrid, this);
   //   this._updatePosition();
   },
 
