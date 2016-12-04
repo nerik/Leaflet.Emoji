@@ -4,7 +4,7 @@ L.Emoji = L.GeoJSON.extend({
 
     // simplify polygons for faster PiP
     // TODO fine tune for each each z change
-    var simplified = turf.simplify(geoJSON, 0.1, false);
+    var simplified = turf.simplify(geoJSON, 0.05, false);
 
     L.GeoJSON.prototype.initialize.call(this, simplified);
 
@@ -31,9 +31,9 @@ L.Emoji = L.GeoJSON.extend({
 
 
     this._map = map;
-    this._layer = new L.Control._EmojiStaticLayer();
-    map.addControl(this._layer);
 
+    this._layer = new EmojiLayer();
+    this._layer.addTo(this._map);
 
     // get polygons envelope
     this._layerKeys = Object.keys(this._layers);
@@ -64,8 +64,6 @@ L.Emoji = L.GeoJSON.extend({
   },
 
   _getGrid() {
-    console.time('test');
-
     var polygonsInViewport = [];
     var viewportNW = this._map.containerPointToLatLng([0, 0]);
     var viewportSE = this._map.containerPointToLatLng([400, 800]);
@@ -86,7 +84,7 @@ L.Emoji = L.GeoJSON.extend({
         // console.log(x, y)
         var ll = this._map.containerPointToLatLng([x + 10, y + 10]);
         var value = null;
-        for (var i = 0; i < polygonsInViewport.length; i++) {
+        for (i = 0; i < polygonsInViewport.length; i++) {
           var layer = polygonsInViewport[i];
           var inside = turf.inside([ll.lng, ll.lat], layer);
           if (inside === true) {
@@ -99,10 +97,9 @@ L.Emoji = L.GeoJSON.extend({
       }
     }
 
-    console.timeEnd('test');
-    console.log(values)
+    // console.log(values)
 
-    this._layer.setGrid(values)
+    this._layer.setGrid(values);
   }
   //
   // _updatePosition: function(p) {
@@ -110,37 +107,57 @@ L.Emoji = L.GeoJSON.extend({
   // }
 });
 
-L.Control._EmojiStaticLayer = L.Control.extend({
-  options: {
-    position: 'topleft'
+var EmojiLayer = L.Layer.extend({
+  initialize: function(options) {
+
   },
 
-  onAdd: function () {
-    var controlDiv = L.DomUtil.create('div', 'leaflet-control-emoji');
-    controlDiv.style.position = 'absolute';
-    controlDiv.style.margin = 0;
-    controlDiv.style.zIndex = 0;
-    controlDiv.style.width = '100vw';
-    controlDiv.style.height = '100vh';
-    controlDiv.style.fontSize = '20px';
-    controlDiv.style.lineHeight = '20px';
-    controlDiv.innerHTML = '😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄';
-    // L.DomEvent
-    //     .addListener(controlDiv, 'click', L.DomEvent.stopPropagation)
-    //     .addListener(controlDiv, 'click', L.DomEvent.preventDefault)
-    // .addListener(controlDiv, 'click', function () { MapShowCommand(); });
+  onRemove: function() {
 
-    return controlDiv;
+  },
+
+  onAdd: function(map) {
+    this._map = map;
+    var div = 'div';
+    var classes = 'emoji-layer leaflet-zoom-hide';
+    this._el = L.DomUtil.create(div, classes);
+    this._el.style.position = 'absolute';
+    this._el.style.margin = 0;
+    this._el.style.zIndex = 0;
+    this._el.style.width = '100vw';
+    this._el.style.height = '100vh';
+    this._el.style.fontSize = '20px';
+    this._el.style.lineHeight = '20px';
+    this._el.innerHTML = '😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄';
+
+    map.getPanes().overlayPane.appendChild(this._el);
+
+    // TODO also fire on animation
+    this._map.on('move', this._onMove.bind(this));
   },
 
   setGrid(grid) {
     console.log(this);
     var str = grid.map(v => v === null ? '💩' : '😄').join('');
-    console.log(str)
+    console.log(str);
 
-    this._container.innerHTML = str
+    this._el.innerHTML = str;
+  },
+
+  _onMove: function() {
+    this._el.style.transform = _invertTranslate3D(this._map._mapPane.style.transform);
   }
+
 });
+
+var _invertTranslate3D = function(originalTransform) {
+  var replacer = function (full, xStr, yStr) {
+    var x = -parseInt(xStr);
+    var y = -parseInt(yStr);
+    return 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
+  };
+  return originalTransform.replace(/translate3d\((-?\d+)px, (-?\d+)px.+\)/, replacer);
+};
 
 L.emoji = function(options) {
   return new L.Emoji(options);
