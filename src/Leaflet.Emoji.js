@@ -1,45 +1,29 @@
-L.Emoji = L.GeoJSON.extend({
-  initialize: function(geoJSON) {
-    console.log(geoJSON);
+L.Emoji = L.Layer.extend({
+  options: {
+  },
+
+  initialize: function(geoJSON, options) {
+    L.Util.setOptions(this, options);
 
     // simplify polygons for faster PiP
     // TODO fine tune for each each z change
-    var simplified = turf.simplify(geoJSON, 0.05, false);
-
-    L.GeoJSON.prototype.initialize.call(this, simplified);
-
-
+    this._geoJSON = turf.simplify(geoJSON, 0.05, false);
   },
   onAdd: function(map) {
-    L.GeoJSON.prototype.onAdd.call(this, map);
-  //   console.log('added')
-  //   this._map = map;
-  //
-    // this._layerElement = L.DomUtil.create('div', '.someClass leaflet-zoom-hide');
-    // console.log(this._layerElement)
-    // this._layerElement.innerHTML = 'lala';
-    // map._container.appendChild(this._layerElement);
-
-    // var germany;
-    // keys.forEach(function(k,i) {
-    //   // console.log(this._layers[k].feature.properties.admin, i)
-    //   if(this._layers[k].feature.properties.admin === 'Germany') {
-    //     germany = this._layers[k].feature;
-    //   }
-    // }.bind(this))
-    // var country =
-
-
     this._map = map;
+
+    this._geoJSONLayer = L.geoJSON(this._geoJSON);
+    this._geoJSONLayer.addTo(this._map);
 
     this._layer = new EmojiLayer();
     this._layer.addTo(this._map);
+    this._geoJSONLayers = this._geoJSONLayer._layers;
 
     // get polygons envelope
-    this._layerKeys = Object.keys(this._layers);
+    this._layerKeys = Object.keys(this._geoJSONLayers);
     this._polygons = [];
     this._layerKeys.forEach(function(k) {
-      var layer = this._layers[k].feature;
+      var layer = this._geoJSONLayers[k].feature;
       var env = turf.envelope(layer).geometry.coordinates[0];
       var envLng = env.map(ll => ll[0]);
       var envLat = env.map(ll => ll[1]);
@@ -101,10 +85,6 @@ L.Emoji = L.GeoJSON.extend({
 
     this._layer.setGrid(values);
   }
-  //
-  // _updatePosition: function(p) {
-  //   console.log('update pos');
-  // }
 });
 
 var EmojiLayer = L.Layer.extend({
@@ -128,12 +108,12 @@ var EmojiLayer = L.Layer.extend({
     this._el.style.height = '100vh';
     this._el.style.fontSize = '20px';
     this._el.style.lineHeight = '20px';
-    this._el.innerHTML = '😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄😄';
+    this._el.innerHTML = '';
 
     map.getPanes().overlayPane.appendChild(this._el);
 
-    // TODO also fire on animation
-    this._map.on('move', this._onMove.bind(this));
+    // TODO also fire on animation?
+    this._map.on('moveend', this._onMove.bind(this));
   },
 
   setGrid(grid) {
@@ -158,6 +138,8 @@ var _invertTranslate3D = function(originalTransform) {
   };
   return originalTransform.replace(/translate3d\((-?\d+)px, (-?\d+)px.+\)/, replacer);
 };
+
+
 
 L.emoji = function(options) {
   return new L.Emoji(options);
