@@ -1,6 +1,7 @@
 L.Emoji = L.Layer.extend({
   options: {
-    showGeoJSON: true
+    showGeoJSON: true,
+    size: 18
   },
 
   initialize: function(geoJSON, options) {
@@ -22,7 +23,7 @@ L.Emoji = L.Layer.extend({
       this._geoJSONLayer.addTo(this._map);
     }
 
-    this._layer = new EmojiLayer();
+    this._layer = new EmojiLayer({size: this.options.size});
     this._layer.addTo(this._map);
 
     // get polygons envelope
@@ -53,10 +54,19 @@ L.Emoji = L.Layer.extend({
 
   _getGrid() {
     var polygonsInViewport = [];
+
+    var size = this.options.size;
+
+    var computedStyle = window.getComputedStyle(this._map._container);
+    var viewportWidth = parseFloat(computedStyle.width);
+    var viewportHeight = parseFloat(computedStyle.height);
+
+    // add the extra emoji to match the exact grid size
+    viewportWidth += size - (viewportWidth % size);
+    viewportHeight += size - (viewportHeight % size);
+
     var viewportNW = this._map.containerPointToLatLng([0, 0]);
-    var viewportSE = this._map.containerPointToLatLng([400, 800]);
-
-
+    var viewportSE = this._map.containerPointToLatLng([viewportWidth, viewportHeight]);
     for (var i = 0; i < this._polygons.length; i++) {
       var poly = this._polygons[i];
       if ( !(poly.envelope.eLng < viewportNW.lng ||
@@ -67,10 +77,10 @@ L.Emoji = L.Layer.extend({
       }
     }
     var values = [];
-    for (var y = 0; y < 800; y += 20) {
-      for (var x = 0; x < 400; x += 20) {
+    for (var y = 0; y < viewportHeight; y += size) {
+      for (var x = 0; x < viewportWidth; x += size) {
         // console.log(x, y)
-        var ll = this._map.containerPointToLatLng([x + 10, y + 10]);
+        var ll = this._map.containerPointToLatLng([x + size/2, y + size/2]);
         var value = null;
         for (i = 0; i < polygonsInViewport.length; i++) {
           var feature = polygonsInViewport[i];
@@ -87,13 +97,13 @@ L.Emoji = L.Layer.extend({
 
     // console.log(values)
 
-    this._layer.setGrid(values);
+    this._layer.setGrid(values, viewportWidth, viewportHeight);
   }
 });
 
 var EmojiLayer = L.Layer.extend({
   initialize: function(options) {
-
+    L.Util.setOptions(this, options);
   },
 
   onRemove: function() {
@@ -108,10 +118,8 @@ var EmojiLayer = L.Layer.extend({
     this._el.style.position = 'absolute';
     this._el.style.margin = 0;
     this._el.style.zIndex = 0;
-    this._el.style.width = '100vw';
-    this._el.style.height = '100vh';
-    this._el.style.fontSize = '20px';
-    this._el.style.lineHeight = '20px';
+    this._el.style.fontSize = this.options.size + 'px';
+    this._el.style.lineHeight = this.options.size + 'px';
     this._el.innerHTML = '';
 
     map.getPanes().overlayPane.appendChild(this._el);
@@ -120,7 +128,10 @@ var EmojiLayer = L.Layer.extend({
     this._map.on('moveend', this._onMove.bind(this));
   },
 
-  setGrid(grid) {
+  setGrid(grid, w, h) {
+    this._el.style.width = w + 'px';
+    this._el.style.height = h +  + 'px';
+
     var str = grid.map(v => v === null ? '💩' : '😄').join('');
 
     this._el.innerHTML = str;

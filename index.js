@@ -17,7 +17,8 @@
       .then(payload => {
         // console.log(payload)
         L.emoji(JSON.parse(payload), {
-          showGeoJSON: true
+          showGeoJSON: true,
+          size: 18
         }).addTo(map);
       });
   }
