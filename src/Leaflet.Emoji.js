@@ -1,7 +1,8 @@
 L.Emoji = L.Layer.extend({
   options: {
     showGeoJSON: true,
-    size: 18
+    size: 18,
+    emoji: '❓'
   },
 
   initialize: function(geoJSON, options) {
@@ -78,6 +79,7 @@ L.Emoji = L.Layer.extend({
     }
     var values = [];
     for (var y = 0; y < viewportHeight; y += size) {
+      var line = [];
       for (var x = 0; x < viewportWidth; x += size) {
         // console.log(x, y)
         var ll = this._map.containerPointToLatLng([x + size/2, y + size/2]);
@@ -90,9 +92,9 @@ L.Emoji = L.Layer.extend({
             break;
           }
         }
-        values.push(value);
-
+        line.push(value);
       }
+      values.push(line);
     }
 
     // console.log(values)
@@ -132,7 +134,12 @@ var EmojiLayer = L.Layer.extend({
     this._el.style.width = w + 'px';
     this._el.style.height = h +  + 'px';
 
-    var str = grid.map(v => v === null ? '💩' : '😄').join('');
+    var str = grid.map(line => {
+      return line.map(value => {
+        return value === null ? '💩' : '😄';
+      }).join('');
+    }).join('\n');
+
 
     this._el.innerHTML = str;
   },
