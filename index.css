@@ -4,3 +4,10 @@ html, body, #map {
   padding: 0;
   margin: 0;
 }
+
+.copyBtn {
+  position: absolute;
+  z-index: 999;
+  top: 10px;
+  right: 10px;
+}

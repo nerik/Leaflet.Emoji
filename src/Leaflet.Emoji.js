@@ -46,14 +46,23 @@ L.Emoji = L.Layer.extend({
     }.bind(this));
 
 
-    this._getGrid();
+    this._setGrid();
   //
   //   map.on('viewreset', this._updatePosition, this);
     map.on('moveend', this._getGrid, this);
   //   this._updatePosition();
   },
 
-  _getGrid() {
+
+  getGrid() {
+    return this._layer.getGrid();
+  },
+
+  copyGrid() {
+    this._layer.copyGrid();
+  },
+
+  _setGrid() {
     var polygonsInViewport = [];
 
     var size = this.options.size;
@@ -101,7 +110,9 @@ L.Emoji = L.Layer.extend({
 
     this._layer.setGrid(values, viewportWidth, viewportHeight);
   }
+
 });
+
 
 var EmojiLayer = L.Layer.extend({
   initialize: function(options) {
@@ -134,14 +145,31 @@ var EmojiLayer = L.Layer.extend({
     this._el.style.width = w + 'px';
     this._el.style.height = h +  + 'px';
 
-    var str = grid.map(line => {
+    this._grid = grid.map(line => {
       return line.map(value => {
         return value === null ? '💩' : '😄';
       }).join('');
     }).join('\n');
 
+    this._el.innerHTML = this._grid;
+  },
 
-    this._el.innerHTML = str;
+  getGrid() {
+    return this._grid;
+  },
+
+  copyGrid() {
+    var el = document.createElement('textarea');
+    el.innerHTML = this._grid;
+    el.select();
+
+    try {
+      var successful = document.execCommand('copy');
+      var msg = successful ? 'successful' : 'unsuccessful';
+      console.log('Copying text command was ' + msg);
+    } catch (err) {
+      console.log('Oops, unable to copy');
+    }
   },
 
   _onMove: function() {

@@ -12,15 +12,22 @@
     // L.emoji({
     //
     // }).addTo(map);
+    var emoji;
     fetch('example/europe.geojson')
       .then(resp => resp.text())
       .then(payload => {
         // console.log(payload)
-        L.emoji(JSON.parse(payload), {
+        emoji = L.emoji(JSON.parse(payload), {
           showGeoJSON: true,
           size: 18
         }).addTo(map);
       });
+
+    document.querySelector('.js-copyBtn').addEventListener('click', function() {
+      console.log('copy')
+      console.log(emoji.getGrid())
+      emoji.copyGrid()
+    })
   }
   window.onload = main;
 })();
