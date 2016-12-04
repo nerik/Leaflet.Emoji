@@ -15,9 +15,10 @@
     fetch('example/europe.geojson')
       .then(resp => resp.text())
       .then(payload => {
-        console.log('loaded')
         // console.log(payload)
-        L.emoji(JSON.parse(payload), { pane: 'main' }).addTo(map);
+        L.emoji(JSON.parse(payload), {
+          showGeoJSON: true
+        }).addTo(map);
       });
   }
   window.onload = main;

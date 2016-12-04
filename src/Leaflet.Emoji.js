@@ -1,5 +1,6 @@
 L.Emoji = L.Layer.extend({
   options: {
+    showGeoJSON: true
   },
 
   initialize: function(geoJSON, options) {
@@ -12,24 +13,23 @@ L.Emoji = L.Layer.extend({
   onAdd: function(map) {
     this._map = map;
 
-    this._geoJSONLayer = L.geoJSON(this._geoJSON);
-    this._geoJSONLayer.addTo(this._map);
+    if (this.options.showGeoJSON) {
+      this._geoJSONLayer = L.geoJSON(this._geoJSON);
+      this._geoJSONLayer.addTo(this._map);
+    }
 
     this._layer = new EmojiLayer();
     this._layer.addTo(this._map);
-    this._geoJSONLayers = this._geoJSONLayer._layers;
 
     // get polygons envelope
-    this._layerKeys = Object.keys(this._geoJSONLayers);
     this._polygons = [];
-    this._layerKeys.forEach(function(k) {
-      var layer = this._geoJSONLayers[k].feature;
-      var env = turf.envelope(layer).geometry.coordinates[0];
+    this._geoJSON.features.forEach(function(feature) {
+      var env = turf.envelope(feature).geometry.coordinates[0];
       var envLng = env.map(ll => ll[0]);
       var envLat = env.map(ll => ll[1]);
 
       this._polygons.push({
-        layer: layer,
+        feature: feature,
         envelope: {
           wLng: Math.min.apply(Math, envLng),
           sLat: Math.min.apply(Math, envLat),
@@ -59,7 +59,7 @@ L.Emoji = L.Layer.extend({
         poly.envelope.wLng > viewportSE.lng ||
         poly.envelope.sLat > viewportNW.lat ||
         poly.envelope.nLat < viewportSE.lat)) {
-        polygonsInViewport.push(poly.layer);
+        polygonsInViewport.push(poly.feature);
       }
     }
     var values = [];
@@ -69,10 +69,10 @@ L.Emoji = L.Layer.extend({
         var ll = this._map.containerPointToLatLng([x + 10, y + 10]);
         var value = null;
         for (i = 0; i < polygonsInViewport.length; i++) {
-          var layer = polygonsInViewport[i];
-          var inside = turf.inside([ll.lng, ll.lat], layer);
+          var feature = polygonsInViewport[i];
+          var inside = turf.inside([ll.lng, ll.lat], feature);
           if (inside === true) {
-            value = layer.properties.admin;
+            value = feature.properties.admin;
             break;
           }
         }
@@ -117,9 +117,7 @@ var EmojiLayer = L.Layer.extend({
   },
 
   setGrid(grid) {
-    console.log(this);
     var str = grid.map(v => v === null ? '💩' : '😄').join('');
-    console.log(str);
 
     this._el.innerHTML = str;
   },
@@ -141,6 +139,6 @@ var _invertTranslate3D = function(originalTransform) {
 
 
 
-L.emoji = function(options) {
-  return new L.Emoji(options);
+L.emoji = function(geoJSON, options) {
+  return new L.Emoji(geoJSON, options);
 };
