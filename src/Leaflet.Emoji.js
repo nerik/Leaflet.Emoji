@@ -1,9 +1,10 @@
+var EMPTY = '　';
 L.Emoji = L.Layer.extend({
   options: {
     showGeoJSON: true,
     size: 18,
     emoji: '❓',
-    emptyEmoji: '💩'
+    emptyEmoji: EMPTY
   },
 
   initialize: function(geoJSON, options) {
@@ -99,10 +100,13 @@ L.Emoji = L.Layer.extend({
         for (i = 0; i < polygonsInViewport.length; i++) {
           var feature = polygonsInViewport[i];
           var inside = turf.inside([ll.lng, ll.lat], feature);
-          emoji = getEmoji(feature, inside, this.options);
           if (inside === true) {
+            emoji = getEmoji(feature, this.options);
             break;
           }
+        }
+        if (!emoji) {
+          emoji = getEmoji(null, this.options);
         }
         line.push(emoji);
       }
@@ -117,17 +121,38 @@ L.Emoji = L.Layer.extend({
   _getEmojiMethod() {
     if (typeof (this.options.emoji) === 'function') {
       return this._getEmojiFunction;
-    } else {
+    } else if (typeof (this.options.emoji) === 'string') {
       return this._getEmojiString;
+    } else if (this.options.emoji.property && this.options.emoji.values) {
+      return this._getEmojiObject;
+    } else {
+      throw new Error('the fuck you\'re doing man');
     }
   },
 
-  _getEmojiString(feature, inPolygon, options) {
-    return (inPolygon) ? options.emoji : options.emptyEmoji;
+  _getEmojiFunction(feature, options) {
+    return options.emoji(feature);
   },
 
-  _getEmojiFunction(feature, inPolygon, options) {
-    return options.emoji(feature);
+  _getEmojiString(feature, options) {
+    return (feature) ? options.emoji : options.emptyEmoji;
+  },
+
+  _getEmojiObject(feature, options) {
+    if (feature) {
+      // debugger
+      var value = feature.properties[options.emoji.property];
+      if (value && options.emoji.values[value]) {
+        return options.emoji.values[value];
+      } else if (options.emoji.defaultValue) {
+        return options.emoji.defaultValue;
+      }
+    } else {
+      if (options.emoji.emptyValue) {
+        return options.emoji.emptyValue;
+      }
+    }
+    return EMPTY;
   }
 
 });
@@ -204,7 +229,7 @@ var _invertTranslate3D = function(originalTransform) {
   return originalTransform.replace(/translate3d\((-?\d+)px, (-?\d+)px.+\)/, replacer);
 };
 
-
+L.Emoji.EMPTY = EMPTY;
 
 L.emoji = function(geoJSON, options) {
   return new L.Emoji(geoJSON, options);

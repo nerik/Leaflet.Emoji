@@ -20,12 +20,30 @@
         emoji = L.emoji(JSON.parse(payload), {
           showGeoJSON: true,
           size: 18,
-          emoji: function(feature) {
-            if (feature.properties.admin === 'France') {
-              return '🇫🇷';
-            }
-            return '🍉';
-          }
+          emoji: {
+            property: 'admin',
+            values: {
+              'France': '🇫🇷',
+              'Germany': '🇩🇪'
+            },
+            defaultValue: '🍉',
+            emptyValue: '🐟'
+            // values: {
+            //   'France': ':fr:',
+            //   'Germany': ':de:'
+            // }
+          },
+          useShortcodes: true
+          // emoji: function(feature) {
+          //   // console.log(feature.properties)
+          //   if (!feature) {
+          //     return L.Emoji.EMPTY;
+          //   }
+          //   if (feature.properties.admin === 'France') {
+          //     return '🇫🇷';
+          //   }
+          //   return '🍉';
+          // }
         }).addTo(map);
       });
 
