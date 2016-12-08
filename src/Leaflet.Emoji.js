@@ -8,6 +8,7 @@ L.Emoji = L.Layer.extend({
   },
 
   initialize: function(geoJSON, options) {
+    this._getEmoji = this._getEmojiMethod(options);
     var preparedOptions = this._matchShortcodes(options);
     L.Util.setOptions(this, preparedOptions);
 
@@ -91,7 +92,6 @@ L.Emoji = L.Layer.extend({
     }
 
     var values = [];
-    var getEmoji = this._getEmojiMethod();
 
     for (var y = 0; y < viewportHeight; y += size) {
       var line = [];
@@ -102,12 +102,12 @@ L.Emoji = L.Layer.extend({
           var feature = polygonsInViewport[i];
           var inside = turf.inside([ll.lng, ll.lat], feature);
           if (inside === true) {
-            emoji = getEmoji(feature, this.options);
+            emoji = this._getEmoji(feature, this.options);
             break;
           }
         }
         if (!emoji) {
-          emoji = getEmoji(null, this.options);
+          emoji = this._getEmoji(null, this.options);
         }
         line.push(emoji);
       }
@@ -119,12 +119,12 @@ L.Emoji = L.Layer.extend({
     this._layer.setGrid(values, viewportWidth, viewportHeight);
   },
 
-  _getEmojiMethod() {
-    if (typeof (this.options.emoji) === 'function') {
+  _getEmojiMethod(options) {
+    if (typeof (options.emoji) === 'function') {
       return this._getEmojiFunction;
-    } else if (typeof (this.options.emoji) === 'string') {
+    } else if (typeof (options.emoji) === 'string') {
       return this._getEmojiString;
-    } else if (this.options.emoji.property && this.options.emoji.values) {
+    } else if (options.emoji.property && options.emoji.values) {
       return this._getEmojiObject;
     } else {
       throw new Error('the fuck you\'re doing man');
@@ -157,14 +157,30 @@ L.Emoji = L.Layer.extend({
 
   _matchShortcodes(options) {
     if (typeof (options.emoji) === 'string') {
-      if (L.Emoji.SHORTCODES[options.emoji]) {
-        options.emoji = String.fromCodePoint(L.Emoji.SHORTCODES[options.emoji]);
+      options.emoji = this._getShortcode(options.emoji);
+    } else if (options.emoji.property && options.emoji.values) {
+      Object.keys(options.emoji.values).forEach(function(value) {
+        options.emoji.values[value] = this._getShortcode(options.emoji.values[value]);
+      }.bind(this));
+
+      if (options.emoji.defaultValue) {
+        options.emoji.defaultValue = this._getShortcode(options.emoji.defaultValue);
+      }
+      if (options.emoji.emptyValue) {
+        options.emoji.emptyValue = this._getShortcode(options.emoji.emptyValue);
       }
     }
 
     return options;
-  }
+  },
 
+  _getShortcode(emoji) {
+    var shortcode = L.Emoji.SHORTCODES[emoji];
+    if (shortcode) {
+      return String.fromCodePoint(shortcode);
+    }
+    return emoji;
+  }
 });
 
 
