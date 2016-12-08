@@ -20,20 +20,21 @@
         emoji = L.emoji(JSON.parse(payload), {
           showGeoJSON: true,
           size: 18,
-          emoji: {
-            property: 'admin',
-            values: {
-              'France': '🇫🇷',
-              'Germany': '🇩🇪'
-            },
-            defaultValue: '🍉',
-            emptyValue: '🐟'
-            // values: {
-            //   'France': ':fr:',
-            //   'Germany': ':de:'
-            // }
-          },
-          useShortcodes: true
+          emoji: ':sparkles:'
+          // emoji: {
+          //   property: 'admin',
+          //   values: {
+          //     'France': '🇫🇷',
+          //     'Germany': '🇩🇪'
+          //   },
+          //   // defaultValue: '🍉',
+          //   defaultValue: ':sparkles:',
+          //   emptyValue: '🐟'
+          //   // values: {
+          //   //   'France': ':fr:',
+          //   //   'Germany': ':de:'
+          //   // }
+          // }
           // emoji: function(feature) {
           //   // console.log(feature.properties)
           //   if (!feature) {
