@@ -16,6 +16,15 @@ L.Emoji = L.Layer.extend({
     // TODO fine tune for each each z change
     this._geoJSON = turf.simplify(geoJSON, 0.05, false);
   },
+
+  onRemove: function() {
+    if (this._geoJSONLayer) {
+      this._geoJSONLayer.remove();
+    }
+    this._layer.remove();
+    this._map.off('moveend', this._setGrid, this);
+  },
+
   onAdd: function(map) {
     this._map = map;
 
@@ -49,14 +58,9 @@ L.Emoji = L.Layer.extend({
       });
     }.bind(this));
 
-
     this._setGrid();
-  //
-  //   map.on('viewreset', this._updatePosition, this);
-    map.on('moveend', this._setGrid, this);
-  //   this._updatePosition();
+    this._map.on('moveend', this._setGrid, this);
   },
-
 
   getGrid() {
     return this._layer.getGrid();
@@ -185,17 +189,14 @@ L.Emoji = L.Layer.extend({
 
 
 var EmojiLayer = L.Layer.extend({
-  _onMove: function() {
-    this._el.style.transform = _invertTranslate3D(this._map._mapPane.style.transform);
-  },
 
   initialize: function(options) {
     L.Util.setOptions(this, options);
-    this._onMoveBound = this._onMove.bind(this);
   },
 
   onRemove: function() {
-    this._map.off('moveend', this._onMoveBound);
+    this._map.off('moveend', this._onMove, this);
+    this._map.getPanes().overlayPane.removeChild(this._el);
   },
 
   onAdd: function(map) {
@@ -214,7 +215,7 @@ var EmojiLayer = L.Layer.extend({
     this._map.getPanes().overlayPane.appendChild(this._el);
 
     // TODO also fire on animation?
-    this._map.on('moveend', this._onMoveBound);
+    this._map.on('moveend', this._onMove, this);
   },
 
   setGrid(grid, w, h) {
@@ -236,7 +237,12 @@ var EmojiLayer = L.Layer.extend({
     this._el.select();
     document.execCommand('copy');
     this._el.selectionStart = this._el.selectionEnd = -1;
-  }
+  },
+
+  _onMove: function() {
+    console.log('move')
+    this._el.style.transform = _invertTranslate3D(this._map._mapPane.style.transform);
+  },
 });
 
 var _invertTranslate3D = function(originalTransform) {
