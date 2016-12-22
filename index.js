@@ -50,10 +50,9 @@
       });
 
     document.querySelector('.js-copyBtn').addEventListener('click', function() {
-      console.log('copy')
-      console.log(emoji.getGrid())
-      emoji.copyGrid()
-    })
+      console.log(emoji.getGrid());
+      emoji.copyGrid();
+    });
   }
   window.onload = main;
 })();

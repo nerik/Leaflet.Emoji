@@ -200,17 +200,18 @@ var EmojiLayer = L.Layer.extend({
 
   onAdd: function(map) {
     this._map = map;
-    var div = 'div';
     var classes = 'emoji-layer leaflet-zoom-hide';
-    this._el = L.DomUtil.create(div, classes);
+    this._el = L.DomUtil.create('textarea', classes);
     this._el.style.position = 'absolute';
     this._el.style.margin = 0;
     this._el.style.zIndex = 0;
     this._el.style.fontSize = this.options.size + 'px';
     this._el.style.lineHeight = this.options.size + 'px';
+    this._el.style.background = 'none';
+    this._el.style.border = 'none';
     this._el.innerHTML = '';
 
-    map.getPanes().overlayPane.appendChild(this._el);
+    this._map.getPanes().overlayPane.appendChild(this._el);
 
     // TODO also fire on animation?
     this._map.on('moveend', this._onMoveBound);
@@ -218,7 +219,7 @@ var EmojiLayer = L.Layer.extend({
 
   setGrid(grid, w, h) {
     this._el.style.width = w + 'px';
-    this._el.style.height = h +  + 'px';
+    this._el.style.height = h + 'px';
 
     this._grid = grid.map(line => {
       return line.join('');
@@ -232,17 +233,9 @@ var EmojiLayer = L.Layer.extend({
   },
 
   copyGrid() {
-    var el = document.createElement('textarea');
-    el.innerHTML = this._grid;
-    el.select();
-
-    try {
-      var successful = document.execCommand('copy');
-      var msg = successful ? 'successful' : 'unsuccessful';
-      console.log('Copying text command was ' + msg);
-    } catch (err) {
-      console.log('Oops, unable to copy');
-    }
+    this._el.select();
+    document.execCommand('copy');
+    this._el.selectionStart = this._el.selectionEnd = -1;
   }
 });
 
@@ -2634,4 +2627,4 @@ L.Emoji.SHORTCODES = { ':interrobang:': [ 8265 ],
   ':white_large_square:': [ 11036 ],
   ':star:': [ 11088 ],
   ':o:': [ 11093 ],
-  ':part_alternation_mark:': [ 12349 ] }
+  ':part_alternation_mark:': [ 12349 ] };
