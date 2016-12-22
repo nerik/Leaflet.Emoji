@@ -5,7 +5,7 @@ html, body, #map {
   margin: 0;
 }
 
-.copyBtn {
+.controls {
   position: absolute;
   z-index: 999;
   top: 10px;
