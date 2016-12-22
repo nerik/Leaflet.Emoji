@@ -185,12 +185,17 @@ L.Emoji = L.Layer.extend({
 
 
 var EmojiLayer = L.Layer.extend({
+  _onMove: function() {
+    this._el.style.transform = _invertTranslate3D(this._map._mapPane.style.transform);
+  },
+
   initialize: function(options) {
     L.Util.setOptions(this, options);
+    this._onMoveBound = this._onMove.bind(this);
   },
 
   onRemove: function() {
-
+    this._map.off('moveend', this._onMoveBound);
   },
 
   onAdd: function(map) {
@@ -208,7 +213,7 @@ var EmojiLayer = L.Layer.extend({
     map.getPanes().overlayPane.appendChild(this._el);
 
     // TODO also fire on animation?
-    this._map.on('moveend', this._onMove.bind(this));
+    this._map.on('moveend', this._onMoveBound);
   },
 
   setGrid(grid, w, h) {
@@ -238,12 +243,7 @@ var EmojiLayer = L.Layer.extend({
     } catch (err) {
       console.log('Oops, unable to copy');
     }
-  },
-
-  _onMove: function() {
-    this._el.style.transform = _invertTranslate3D(this._map._mapPane.style.transform);
   }
-
 });
 
 var _invertTranslate3D = function(originalTransform) {
