@@ -23,7 +23,7 @@
         url: 'example/data/emoji_iucn.topo.json',
         size: 18,
         showGeoJSON: false,
-        center: [0, 0],
+        center: [0, 40],
         zoom: 3,
         emoji: function (feature) {
           if (!feature) {
@@ -86,7 +86,7 @@
         url: 'example/data/emoji_timezones.topo.json',
         size: 18,
         showGeoJSON: true,
-        center: [0, 0],
+        center: [40, 100],
         zoom: 3,
         emoji: function (feature) {
           // console.log(feature)
@@ -100,8 +100,8 @@
             hour = 12;
           }
           var shortcode = ':clock' + hour + ':';
-          if (hour % 1 === 0.5) {
-            shortcode = ':clock' + (hour - 0.5) + '30:';
+          if (hour % 1 !== 0) {
+            shortcode = ':clock' + Math.ceil(hour) + '30:';
           }
           return L.Emoji.getShortcode(shortcode);
         }
