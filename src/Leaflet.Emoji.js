@@ -23,7 +23,8 @@ L.Emoji = L.Layer.extend({
 
     // simplify polygons for faster PiP
     // TODO fine tune for each each z change
-    this._geoJSON = turf.simplify(geoJSON, 0.05, false);
+    this._geoJSON = geoJSON;
+    // this._geoJSON = turf.simplify(geoJSON, 0.05, false);
   },
 
   onRemove: function() {
@@ -52,19 +53,21 @@ L.Emoji = L.Layer.extend({
     // get polygons envelope
     this._polygons = [];
     this._geoJSON.features.forEach(function(feature) {
-      var env = turf.envelope(feature).geometry.coordinates[0];
-      var envLng = env.map(ll => ll[0]);
-      var envLat = env.map(ll => ll[1]);
+      if (feature.geometry) {
+        var env = turf.envelope(feature).geometry.coordinates[0];
+        var envLng = env.map(ll => ll[0]);
+        var envLat = env.map(ll => ll[1]);
 
-      this._polygons.push({
-        feature: feature,
-        envelope: {
-          wLng: Math.min.apply(Math, envLng),
-          sLat: Math.min.apply(Math, envLat),
-          eLng: Math.max.apply(Math, envLng),
-          nLat: Math.max.apply(Math, envLat)
-        }
-      });
+        this._polygons.push({
+          feature: feature,
+          envelope: {
+            wLng: Math.min.apply(Math, envLng),
+            sLat: Math.min.apply(Math, envLat),
+            eLng: Math.max.apply(Math, envLng),
+            nLat: Math.max.apply(Math, envLat)
+          }
+        });
+      }
     }.bind(this));
 
     this._setGrid();

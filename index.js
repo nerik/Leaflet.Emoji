@@ -12,13 +12,45 @@
         center: [50, 0],
         zoom: 5,
         emoji: function (feature) {
-          // console.log(feature)
-          if (feature) {
-            // return '🐟';
-            return L.Emoji.getShortcode(':flag_' + feature.properties.iso2.toLowerCase() + ':')
-          } else {
+          if (!feature) {
             return L.Emoji.EMPTY;
           }
+          return L.Emoji.getShortcode(':flag_' + feature.properties.iso2.toLowerCase() + ':');
+        }
+      },
+      emoji_iucn: {
+        name: 'IUCN Red list',
+        url: 'example/data/emoji_iucn.topo.json',
+        size: 18,
+        showGeoJSON: false,
+        center: [0, 0],
+        zoom: 3,
+        emoji: function (feature) {
+          if (!feature) {
+            return L.Emoji.EMPTY;
+          }
+          var max = 0;
+          var maxType;
+          Object.keys(feature.properties).forEach(function(type) {
+            var value = feature.properties[type];
+            if (type !== 'cartodb_id' && typeof value === 'number') {
+              if (value > max) {
+                maxType = type;
+                max = value;
+              }
+            }
+          });
+          return {
+            amphibians: '🐸',
+            birds: '🐦',
+            fishes: '🐟',
+            fungi_protists: '🍄',
+            mammals: '🐼',
+            molluscs: '🐌',
+            plants: '🌺',
+            reptiles: '🐍',
+            other_inverts: '🐝'
+          }[maxType];
         }
       }
     };
@@ -32,7 +64,7 @@
     // var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>' });
     // map.addLayer(basemap);
 
-    loadMap('emoji_world_borders');
+    loadMap('emoji_iucn');
 
     function loadMap(mapId) {
       if (emoji) {
@@ -48,6 +80,7 @@
       .then(resp => resp.text())
       .then(payload => {
         var topoJSON = JSON.parse(payload);
+        console.log(topoJSON)
         var geoJSON = topojson.feature(topoJSON, topoJSON.objects[mapId]);
         emoji = L.emoji(geoJSON, config
           // {
