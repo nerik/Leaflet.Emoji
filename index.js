@@ -64,7 +64,6 @@
           if (!feature) {
             return L.Emoji.EMPTY;
           }
-          // console.log(feature.properties.ethnic_1st);
           var ethnicity = feature.properties.ethnic_1st;
           var medianAge = feature.properties.median_age;
           if (!ethnicity || ethnicity === 'other' || !medianAge) {
@@ -80,7 +79,31 @@
             'black': ['👶🏿', '👨🏿', '👴🏿'],
             'asian': ['👶', '👨', '👴']
           }[ethnicity][medianAgeIndex];
-
+        }
+      },
+      emoji_timezones: {
+        name: 'NY Census',
+        url: 'example/data/emoji_timezones.topo.json',
+        size: 18,
+        showGeoJSON: true,
+        center: [0, 0],
+        zoom: 3,
+        emoji: function (feature) {
+          // console.log(feature)
+          if (!feature) {
+            return L.Emoji.EMPTY;
+          }
+          console.log(parseFloat(feature.properties.name))
+          var hour = parseFloat(feature.properties.name);
+          hour = (hour >= 0) ? hour : Math.abs(hour);
+          if (hour === 0) {
+            hour = 12;
+          }
+          var shortcode = ':clock' + hour + ':';
+          if (hour % 1 === 0.5) {
+            shortcode = ':clock' + (hour - 0.5) + '30:';
+          }
+          return L.Emoji.getShortcode(shortcode);
         }
       }
     };
@@ -94,7 +117,7 @@
     var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>' });
     map.addLayer(basemap);
 
-    loadMap('emoji_nyc');
+    loadMap('emoji_timezones');
 
     function loadMap(mapId) {
       if (emoji) {
