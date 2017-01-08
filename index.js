@@ -8,7 +8,9 @@
         name: 'World flags',
         url: 'example/data/emoji_world_borders.topo.json',
         size: 18,
-        showGeoJSON: true,
+        showGeoJSON: false,
+        center: [50, 0],
+        zoom: 5,
         emoji: function (feature) {
           // console.log(feature)
           if (feature) {
@@ -22,9 +24,7 @@
     };
 
     var map = L.map('map', {
-      scrollWheelZoom: false,
-      center: [50, 0],
-      zoom: 5
+      scrollWheelZoom: false
     });
 
     var emoji;
@@ -42,7 +42,8 @@
 
       var config = CONFIG[mapId];
 
-      console.log(mapId)
+      map.setView(config.center, config.zoom);
+
       fetch(config.url)
       .then(resp => resp.text())
       .then(payload => {

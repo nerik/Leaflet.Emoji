@@ -11,3 +11,9 @@ html, body, #map {
   top: 10px;
   right: 10px;
 }
+
+.leaflet-container { background-color:rgba(255, 251, 219, 1); }
+
+.leaflet-emoji {
+  text-shadow: 2px 2px 2px rgba(0,0,0,.4);
+}

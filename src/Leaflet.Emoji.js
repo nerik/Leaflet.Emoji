@@ -210,7 +210,7 @@ var EmojiLayer = L.Layer.extend({
 
   onAdd: function(map) {
     this._map = map;
-    var classes = 'emoji-layer leaflet-zoom-hide';
+    var classes = 'leaflet-emoji leaflet-zoom-hide';
     this._el = L.DomUtil.create('textarea', classes);
     this._el.style.position = 'absolute';
     this._el.style.margin = 0;
