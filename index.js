@@ -52,6 +52,36 @@
             other_inverts: '🐝'
           }[maxType];
         }
+      },
+      emoji_nyc: {
+        name: 'NY Census',
+        url: 'example/data/emoji_nyc.topo.json',
+        size: 30,
+        showGeoJSON: false,
+        center: [40.65, -73.94],
+        zoom: 13,
+        emoji: function (feature) {
+          if (!feature) {
+            return L.Emoji.EMPTY;
+          }
+          // console.log(feature.properties.ethnic_1st);
+          var ethnicity = feature.properties.ethnic_1st;
+          var medianAge = feature.properties.median_age;
+          if (!ethnicity || ethnicity === 'other' || !medianAge) {
+            return L.Emoji.EMPTY;
+          }
+
+          var medianAgeIndex = 0;
+          if (medianAge > 30) medianAgeIndex = 1;
+          if (medianAge > 45) medianAgeIndex = 2;
+          return {
+            'white': ['👶🏻', '👨🏻', '👴🏻'],
+            'hispanic or latino': ['👶🏽', '👨🏽', '👴🏽'],
+            'black': ['👶🏿', '👨🏿', '👴🏿'],
+            'asian': ['👶', '👨', '👴']
+          }[ethnicity][medianAgeIndex];
+
+        }
       }
     };
 
@@ -61,10 +91,10 @@
 
     var emoji;
 
-    // var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>' });
-    // map.addLayer(basemap);
+    var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>' });
+    map.addLayer(basemap);
 
-    loadMap('emoji_iucn');
+    loadMap('emoji_nyc');
 
     function loadMap(mapId) {
       if (emoji) {
