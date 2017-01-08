@@ -111,11 +111,18 @@
     var map = L.map('map', {
       scrollWheelZoom: false
     });
+    map.createPane('labels');
+    map.getPane('labels').style.zIndex = 650;
+    map.getPane('labels').style.pointerEvents = 'none';
 
     var emoji;
 
     var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>' });
     map.addLayer(basemap);
+    L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+      attribution: '©OpenStreetMap, ©CartoDB',
+      pane: 'labels'
+    }).addTo(map);
 
     loadMap('emoji_timezones');
 
