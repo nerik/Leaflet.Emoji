@@ -4,23 +4,18 @@
     var mapSelector = document.querySelector('.js-mapSelector');
 
     var CONFIG = {
-      europe_landmass: {
-        url: 'example/europe.geojson',
-        size: 18,
-        emoji: ':sparkles:',
-        showGeoJSON: true
-      },
-      europe_flags: {
-        url: 'example/europe.geojson',
+      emoji_world_borders: {
+        name: 'World flags',
+        url: 'example/data/emoji_world_borders.topo.json',
         size: 18,
         showGeoJSON: true,
-        emoji: {
-          property: 'admin',
-          defaultValue: ':sparkles:',
-          emptyValue: '🐟',
-          values: {
-            'France': ':fr:',
-            'Germany': ':de:'
+        emoji: function (feature) {
+          // console.log(feature)
+          if (feature) {
+            // return '🐟';
+            return L.Emoji.getShortcode(':flag_' + feature.properties.iso2.toLowerCase() + ':')
+          } else {
+            return L.Emoji.EMPTY;
           }
         }
       }
@@ -37,22 +32,23 @@
     // var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>' });
     // map.addLayer(basemap);
 
-    loadMap('europe_landmass');
+    loadMap('emoji_world_borders');
 
-    function loadMap(value) {
+    function loadMap(mapId) {
       if (emoji) {
         emoji.remove();
         emoji = null;
       }
 
-      var config = CONFIG[value];
+      var config = CONFIG[mapId];
 
-      console.log(value)
+      console.log(mapId)
       fetch(config.url)
       .then(resp => resp.text())
       .then(payload => {
-        // console.log(payload)
-        emoji = L.emoji(JSON.parse(payload), config
+        var topoJSON = JSON.parse(payload);
+        var geoJSON = topojson.feature(topoJSON, topoJSON.objects[mapId]);
+        emoji = L.emoji(geoJSON, config
           // {
           // showGeoJSON: true,
           // size: 18,
@@ -95,9 +91,19 @@
       }
     });
 
+    // fill map selector values using config
+    Object.keys(CONFIG).forEach(function(mapId) {
+      var config = CONFIG[mapId];
+      var option = document.createElement('option');
+      option.setAttribute('value', mapId);
+      option.innerHTML = config.name;
+      mapSelector.appendChild(option);
+    });
+
     mapSelector.addEventListener('change', function(event) {
       loadMap(event.target.value);
     });
+
   }
   window.onload = main;
 })();

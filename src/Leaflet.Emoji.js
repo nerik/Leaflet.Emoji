@@ -1,4 +1,13 @@
 var EMPTY = '　';
+
+var getShortcode = function(emoji) {
+  var shortcode = L.Emoji.SHORTCODES[emoji];
+  if (shortcode) {
+    return String.fromCodePoint.apply(null, shortcode);
+  }
+  return emoji;
+};
+
 L.Emoji = L.Layer.extend({
   options: {
     showGeoJSON: true,
@@ -161,17 +170,17 @@ L.Emoji = L.Layer.extend({
 
   _matchShortcodes(options) {
     if (typeof (options.emoji) === 'string') {
-      options.emoji = this._getShortcode(options.emoji);
+      options.emoji = getShortcode(options.emoji);
     } else if (options.emoji.property && options.emoji.values) {
       Object.keys(options.emoji.values).forEach(function(value) {
-        options.emoji.values[value] = this._getShortcode(options.emoji.values[value]);
+        options.emoji.values[value] = this.getShortcode(options.emoji.values[value]);
       }.bind(this));
 
       if (options.emoji.defaultValue) {
-        options.emoji.defaultValue = this._getShortcode(options.emoji.defaultValue);
+        options.emoji.defaultValue = this.getShortcode(options.emoji.defaultValue);
       }
       if (options.emoji.emptyValue) {
-        options.emoji.emptyValue = this._getShortcode(options.emoji.emptyValue);
+        options.emoji.emptyValue = this.getShortcode(options.emoji.emptyValue);
       }
     }
 
@@ -240,9 +249,8 @@ var EmojiLayer = L.Layer.extend({
   },
 
   _onMove: function() {
-    console.log('move')
     this._el.style.transform = _invertTranslate3D(this._map._mapPane.style.transform);
-  },
+  }
 });
 
 var _invertTranslate3D = function(originalTransform) {
@@ -260,6 +268,8 @@ L.emoji = function(geoJSON, options) {
 };
 
 L.Emoji.EMPTY = EMPTY;
+
+L.Emoji.getShortcode = getShortcode;
 
 L.Emoji.SHORTCODES = { ':interrobang:': [ 8265 ],
   ':tm:': [ 8482 ],

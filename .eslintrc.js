@@ -25,5 +25,6 @@ module.exports = {
     "globals": {
       "L": false,
       "turf": false,
+      "topojson": false
     }
 };
