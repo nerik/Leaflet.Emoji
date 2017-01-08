@@ -82,7 +82,7 @@
         }
       },
       emoji_timezones: {
-        name: 'NY Census',
+        name: 'Time zones',
         url: 'example/data/emoji_timezones.topo.json',
         size: 18,
         showGeoJSON: true,
@@ -93,7 +93,7 @@
           if (!feature) {
             return L.Emoji.EMPTY;
           }
-          console.log(parseFloat(feature.properties.name))
+          // console.log(parseFloat(feature.properties.name))
           var hour = parseFloat(feature.properties.name);
           hour = (hour >= 0) ? hour : Math.abs(hour);
           if (hour === 0) {
