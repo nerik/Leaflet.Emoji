@@ -176,14 +176,14 @@ L.Emoji = L.Layer.extend({
       options.emoji = getShortcode(options.emoji);
     } else if (options.emoji.property && options.emoji.values) {
       Object.keys(options.emoji.values).forEach(function(value) {
-        options.emoji.values[value] = this.getShortcode(options.emoji.values[value]);
+        options.emoji.values[value] = this._getShortcode(options.emoji.values[value]);
       }.bind(this));
 
       if (options.emoji.defaultValue) {
-        options.emoji.defaultValue = this.getShortcode(options.emoji.defaultValue);
+        options.emoji.defaultValue = this._getShortcode(options.emoji.defaultValue);
       }
       if (options.emoji.emptyValue) {
-        options.emoji.emptyValue = this.getShortcode(options.emoji.emptyValue);
+        options.emoji.emptyValue = this._getShortcode(options.emoji.emptyValue);
       }
     }
 
