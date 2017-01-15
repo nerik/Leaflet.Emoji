@@ -12,9 +12,12 @@ The goal is to produce copy-pastable thematic maps.
 
 ## Future plans
 
+- bundle this into a properly usable dependency
 - more use cases and demos
+- a sandbox to quickly experiment with GeoJSON files
 - not only render GeoJSONs, but also raster layers
 - UTFGrid support?
+- in 'object' mode, support for mapping emojis to number ranges
 - better performance, better approach than the current naive one, ie "point in polygon in every polygon for every grid cell"
 
 ## Usage
