@@ -6,6 +6,7 @@
     var CONFIG = {
       emoji_world_borders: {
         name: 'World flags',
+        description: 'A copy-pastable map of world flags!',
         url: 'example/data/emoji_world_borders.topo.json',
         size: 18,
         showGeoJSON: false,
@@ -20,6 +21,7 @@
       },
       emoji_iucn: {
         name: 'IUCN Red list',
+        description: 'TBD',
         url: 'example/data/emoji_iucn.topo.json',
         size: 18,
         showGeoJSON: false,
@@ -55,6 +57,7 @@
       },
       emoji_nyc: {
         name: 'NY Census',
+        description: 'TBD',
         url: 'example/data/emoji_nyc.topo.json',
         size: 30,
         showGeoJSON: false,
@@ -83,6 +86,7 @@
       },
       emoji_timezones: {
         name: 'Time zones',
+        description: 'TBD',
         url: 'example/data/emoji_timezones.topo.json',
         size: 18,
         showGeoJSON: true,
@@ -134,6 +138,9 @@
 
       mapSelector.selectedIndex = Object.keys(CONFIG).indexOf(mapId);
 
+      document.querySelector('.js-name').innerHTML = 'Emoji maps: ' + config.name;
+      document.querySelector('.js-description').innerHTML = config.description;
+
       map.setView(config.center, config.zoom);
 
       fetch(config.url)
@@ -167,7 +174,7 @@
       loadMap(event.target.value);
     });
 
-    loadMap('emoji_timezones');
+    loadMap('emoji_world_borders');
 
   }
   window.onload = main;
