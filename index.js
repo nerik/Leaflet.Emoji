@@ -124,8 +124,6 @@
       pane: 'labels'
     }).addTo(map);
 
-    loadMap('emoji_timezones');
-
     function loadMap(mapId) {
       if (emoji) {
         emoji.remove();
@@ -134,45 +132,16 @@
 
       var config = CONFIG[mapId];
 
+      mapSelector.selectedIndex = Object.keys(CONFIG).indexOf(mapId);
+
       map.setView(config.center, config.zoom);
 
       fetch(config.url)
       .then(resp => resp.text())
       .then(payload => {
         var topoJSON = JSON.parse(payload);
-        console.log(topoJSON)
         var geoJSON = topojson.feature(topoJSON, topoJSON.objects[mapId]);
         emoji = L.emoji(geoJSON, config
-          // {
-          // showGeoJSON: true,
-          // size: 18,
-          // // emoji: ':sparkles:'
-          // emoji: {
-          //   property: 'admin',
-          //   // values: {
-          //   //   'France': '🇫🇷',
-          //   //   'Germany': '🇩🇪'
-          //   // },
-          //   // defaultValue: '🍉',
-          //   defaultValue: ':sparkles:',
-          //   // emptyValue: '🐟'
-          //   emptyValue: ':thumbsup:',
-          //   values: {
-          //     'France': ':fr:',
-          //     'Germany': ':de:'
-          //   }
-          // }
-          // emoji: function(feature) {
-          //   // console.log(feature.properties)
-          //   if (!feature) {
-          //     return L.Emoji.EMPTY;
-          //   }
-          //   if (feature.properties.admin === 'France') {
-          //     return '🇫🇷';
-          //   }
-          //   return '🍉';
-          // }
-        //}
       ).addTo(map);
       });
     }
@@ -197,6 +166,8 @@
     mapSelector.addEventListener('change', function(event) {
       loadMap(event.target.value);
     });
+
+    loadMap('emoji_timezones');
 
   }
   window.onload = main;
