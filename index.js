@@ -109,6 +109,48 @@
           }
           return L.Emoji.getShortcode(shortcode);
         }
+      },
+      emoji_landuse: {
+        name: 'Landover of the Île de Ré',
+        description: '',
+        url: 'example/data/emoji_landuse.geo.json',
+        size: 18,
+        useGeoJSON: true,
+        showGeoJSON: false,
+        center: [46.1651,-1.3481],
+        zoom: 14,
+        emoji: {
+          property: 'natural_landuse',
+          values: {
+            'residential': '🏠',
+            'beach': '⛱️',
+            'dune': '🏜️',
+            'grassland': '🌱',
+            'grass': '🌱',
+            'meadow': '☘️',
+            'scrub': '🌿',
+            'heath': '🌿',
+            'water': '💧',
+            'basin': '💧',
+            'reservoir': '💧',
+            'wetland': '💦',
+            'salt_pond': '💦',
+            'wood': '🌳',
+            'forest': '🌳',
+            'farm': '🏡',
+            'farmland': '🐮',
+            'vineyard': '🍇',
+            'orchard': '🍎',
+            'plant_nursery': '🌱',
+            'greenhouse_horticulture': '🌱',
+            'military': '⚔️',
+            'industrial': '🏭',
+            'commercial': '💰',
+            'retail': '💰',
+            'quarry': '🗿',
+            'cemetery': '✝️'
+          }
+        }
       }
     };
 
@@ -146,8 +188,10 @@
       fetch(config.url)
       .then(resp => resp.text())
       .then(payload => {
-        var topoJSON = JSON.parse(payload);
-        var geoJSON = topojson.feature(topoJSON, topoJSON.objects[mapId]);
+        var geoJSON = JSON.parse(payload);
+        if (config.useGeoJSON !== true) {
+          geoJSON = topojson.feature(geoJSON, geoJSON.objects[mapId]);
+        }
         emoji = L.emoji(geoJSON, config
       ).addTo(map);
       });
@@ -174,7 +218,7 @@
       loadMap(event.target.value);
     });
 
-    loadMap('emoji_world_borders');
+    loadMap('emoji_landuse');
 
   }
   window.onload = main;
