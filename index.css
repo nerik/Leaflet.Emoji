@@ -6,16 +6,29 @@ html, body, #map {
   font-family: sans-serif;
 }
 
+#map {
+  height: calc(100% - 140px)
+}
+
 header {
-  padding: 14px;
+  padding: 10px;
+  height: 120px
 }
 
 h1 {
-  margin: 0 0 10px;
+  margin: 0 0 14px;
+}
+
+h1 select {
+  font-size: 24px;
 }
 
 .description {
-  margin: 0;
+}
+
+.source {
+  font-style: italic;
+  margin-top: 5px;
 }
 
 .controls {
@@ -23,6 +36,10 @@ h1 {
   z-index: 999;
   top: 10px;
   right: 10px;
+}
+
+.controls button {
+  font-size: 16px;
 }
 
 .leaflet-container { background-color:rgba(255, 251, 219, 1); }

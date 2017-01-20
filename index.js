@@ -7,6 +7,7 @@
       emoji_world_borders: {
         name: 'World flags',
         description: 'A copy-pastable map of world flags!',
+        source: 'Natural Earth',
         url: 'example/data/emoji_world_borders.topo.json',
         size: 18,
         showGeoJSON: false,
@@ -20,8 +21,9 @@
         }
       },
       emoji_iucn: {
-        name: 'IUCN Red list',
-        description: 'TBD',
+        name: 'IUCN Endangered species',
+        description: 'This maps shows which taxonomic group has the most endangered species for each country of the world:<br>🐸 amphibians, 🐦 birds, 🐟 fishes, 🍄 fungi, 🐼 mammals, 🐌 molluscs, 🌺 plants, 🐍 reptiles, 🐝 other invertebrae',
+        source: 'IUCN',
         url: 'example/data/emoji_iucn.topo.json',
         size: 18,
         showGeoJSON: false,
@@ -57,7 +59,8 @@
       },
       emoji_us_states_hdi: {
         name: 'US States HDI',
-        description: 'TBD',
+        description: 'A modified Human Development Index for the United States.<br>😵 <4.3, 🙁 4.3-4.6, 😐 4.6-4.9, 🙂 4.9-5.4, 😃 >5.4',
+        source: 'Measure of America, 2013 - 2014 dataset',
         url: 'example/data/emoji_us_states_hdi.geojson',
         size: 18,
         showGeoJSON: true,
@@ -74,7 +77,8 @@
       },
       emoji_nyc: {
         name: 'NY Census',
-        description: 'TBD',
+        description: '<b>median age</b>: 👶 < 30, 👨 30-45 👴 >45 / <b>predominant ethnic group:</b> 👨🏻 caucasian, 👨🏽 hispanic or latino, 👨🏿 african american, 👨 asian',
+        source: 'US Census 2010',
         url: 'example/data/emoji_nyc.topo.json',
         size: 30,
         showGeoJSON: false,
@@ -128,8 +132,9 @@
         }
       },
       emoji_landuse: {
-        name: 'Landcover of the Île de Ré',
-        description: '',
+        name: 'Landcover of Île de Ré, France',
+        description: '🏠residential, ⛱️beach, 🏜️dune, 🌱grassland, ☘️meadow, 🌿scrub/heath, 💧water/basin/reservoir, 💦wetland/salt pond, 🌳wood/forest, 🏡farm, 🐮farmland, 🍇vineyard, 🍎orchard, 🌱greenhouse, ⚔️military, 🏭industrial, 💰commercial/retail, 🗿quarry, ✝️cemetery',
+        source: '© OpenStreetMap contributors, European Union - SOeS, CORINE Land Cover, 2006.',
         url: 'example/data/emoji_landuse.geo.json',
         size: 18,
         useGeoJSON: true,
@@ -197,8 +202,8 @@
 
       mapSelector.selectedIndex = Object.keys(CONFIG).indexOf(mapId);
 
-      document.querySelector('.js-name').innerHTML = 'Emoji maps: ' + config.name;
       document.querySelector('.js-description').innerHTML = config.description;
+      document.querySelector('.js-source').innerHTML = 'source: ' + config.source;
 
       map.setView(config.center, config.zoom);
 
