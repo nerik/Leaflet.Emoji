@@ -19,7 +19,6 @@ The goal is to produce copy-pastable thematic maps.
 - support for points and lines (now only support polygons)
 - not only render vector, but also raster layers
 - UTFGrid support?
-- in 'object' mode, support for mapping emojis to number ranges
 - better performance, better approach than the current naive one, ie "point in polygon in every polygon for every grid cell"
 
 ## Usage
@@ -78,6 +77,21 @@ var emoji = L.emoji(geoJSON, {
 ```
 
 <img src="https://github.com/nerik/Leaflet.Emoji/blob/master/doc/doc_shortcode.png">
+
+
+### Sequential scales
+```
+var emoji = L.emoji(geoJSON, {
+  emoji: {
+    property: 'hdi_2013',
+    classes: {
+      'breaks': [    4.3, 4.6, 4.9, 5.4    ],
+      'emojis': ['😵', '🙁', '😐', '🙂', '😃']
+    }
+  }
+}).addTo(map);
+```
+
 
 ### Using a function
 ```

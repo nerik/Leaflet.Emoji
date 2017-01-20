@@ -55,6 +55,23 @@
           }[maxType];
         }
       },
+      emoji_us_states_hdi: {
+        name: 'US States HDI',
+        description: 'TBD',
+        url: 'example/data/emoji_us_states_hdi.geojson',
+        size: 18,
+        showGeoJSON: true,
+        useGeoJSON: true,
+        center: [38.10, -99.76],
+        zoom: 4,
+        emoji: {
+          property: 'hdi_2013',
+          classes: {
+            'breaks': [    4.3, 4.6, 4.9, 5.4    ],
+            'emojis': ['😵', '🙁', '😐', '🙂', '😃']
+          }
+        }
+      },
       emoji_nyc: {
         name: 'NY Census',
         description: 'TBD',
@@ -111,7 +128,7 @@
         }
       },
       emoji_landuse: {
-        name: 'Landover of the Île de Ré',
+        name: 'Landcover of the Île de Ré',
         description: '',
         url: 'example/data/emoji_landuse.geo.json',
         size: 18,
@@ -218,7 +235,7 @@
       loadMap(event.target.value);
     });
 
-    loadMap('emoji_landuse');
+    loadMap('emoji_us_states_hdi');
 
   }
   window.onload = main;

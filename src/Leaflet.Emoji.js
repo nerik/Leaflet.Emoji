@@ -140,7 +140,7 @@ L.Emoji = L.Layer.extend({
       return this._getEmojiFunction;
     } else if (typeof (options.emoji) === 'string') {
       return this._getEmojiString;
-    } else if (options.emoji.property && options.emoji.values) {
+    } else if (options.emoji.property && (options.emoji.values || options.emoji.classes)) {
       return this._getEmojiObject;
     } else {
       throw new Error('the fuck you\'re doing man');
@@ -158,8 +158,13 @@ L.Emoji = L.Layer.extend({
   _getEmojiObject(feature, options) {
     if (feature) {
       var value = feature.properties[options.emoji.property];
-      if (value && options.emoji.values[value]) {
-        return options.emoji.values[value];
+      if (value !== undefined) {
+        if (options.emoji.values && options.emoji.values[value]) {
+          return options.emoji.values[value];
+        }
+        if (options.emoji.classes) {
+          return this._getClassFromValue(value, options.emoji.classes);
+        }
       } else if (options.emoji.defaultValue) {
         return options.emoji.defaultValue;
       }
@@ -169,6 +174,15 @@ L.Emoji = L.Layer.extend({
       }
     }
     return EMPTY;
+  },
+
+  _getClassFromValue(value, classes) {
+    for (var i = 0; i < classes.breaks.length; i++) {
+      if (value < classes.breaks[i]) {
+        return classes.emojis[i];
+      }
+    }
+    return classes.emojis[classes.emojis.length - 1];
   },
 
   _matchShortcodes(options) {
