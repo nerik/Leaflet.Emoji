@@ -198,6 +198,8 @@
         emoji = null;
       }
 
+      history.pushState(null, null, '#' + mapId);
+
       var config = CONFIG[mapId];
 
       mapSelector.selectedIndex = Object.keys(CONFIG).indexOf(mapId);
@@ -240,7 +242,8 @@
       loadMap(event.target.value);
     });
 
-    loadMap('emoji_us_states_hdi');
+    var mapId = (document.location.hash !== '') ? document.location.hash.substr(1) : 'emoji_world_borders';
+    loadMap(mapId);
 
   }
   window.onload = main;
