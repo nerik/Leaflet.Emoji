@@ -65,8 +65,8 @@
         size: 18,
         showGeoJSON: true,
         useGeoJSON: true,
-        center: [38.10, -99.76],
-        zoom: 4,
+        center: [38, -85],
+        zoom: 5,
         emoji: {
           property: 'hdi_2013',
           classes: {
@@ -76,6 +76,7 @@
         }
       },
       emoji_nyc: {
+        hide: true,
         name: 'NY Census',
         description: '<b>median age</b>: 👶 < 30, 👨 30-45 👴 >45 / <b>predominant ethnic group:</b> 👨🏻 caucasian, 👨🏽 hispanic or latino, 👨🏿 african american, 👨 asian',
         source: 'US Census 2010',
@@ -107,20 +108,19 @@
       },
       emoji_timezones: {
         name: 'Time zones',
-        description: 'TBD',
+        description: 'Timezones with local offsets as analog clocks emojis',
+        source: 'Natural Earth',
         url: 'example/data/emoji_timezones.topo.json',
         size: 18,
         showGeoJSON: true,
-        center: [40, 100],
+        center: [40, 0],
         zoom: 3,
         emoji: function (feature) {
-          // console.log(feature)
           if (!feature) {
             return L.Emoji.EMPTY;
           }
-          // console.log(parseFloat(feature.properties.name))
           var hour = parseFloat(feature.properties.name);
-          hour = (hour >= 0) ? hour : Math.abs(hour);
+          hour = (hour >= 0) ? hour : 12 + hour;
           if (hour === 0) {
             hour = 12;
           }
@@ -132,6 +132,7 @@
         }
       },
       emoji_landuse: {
+        hide: true,
         name: 'Landcover of Île de Ré, France',
         description: '🏠residential, ⛱️beach, 🏜️dune, 🌱grassland, ☘️meadow, 🌿scrub/heath, 💧water/basin/reservoir, 💦wetland/salt pond, 🌳wood/forest, 🏡farm, 🐮farmland, 🍇vineyard, 🍎orchard, 🌱greenhouse, ⚔️military, 🏭industrial, 💰commercial/retail, 🗿quarry, ✝️cemetery',
         source: '© OpenStreetMap contributors, European Union - SOeS, CORINE Land Cover, 2006.',
@@ -202,7 +203,9 @@
 
       var config = CONFIG[mapId];
 
-      mapSelector.selectedIndex = Object.keys(CONFIG).indexOf(mapId);
+      mapSelector.selectedIndex = Object.keys(CONFIG).filter(function(key) {
+        return CONFIG[key].hide !== true;
+      }).indexOf(mapId);
 
       document.querySelector('.js-description').innerHTML = config.description;
       document.querySelector('.js-source').innerHTML = 'source: ' + config.source;
@@ -232,10 +235,12 @@
     // fill map selector values using config
     Object.keys(CONFIG).forEach(function(mapId) {
       var config = CONFIG[mapId];
-      var option = document.createElement('option');
-      option.setAttribute('value', mapId);
-      option.innerHTML = config.name;
-      mapSelector.appendChild(option);
+      if (config.hide !== true) {
+        var option = document.createElement('option');
+        option.setAttribute('value', mapId);
+        option.innerHTML = config.name;
+        mapSelector.appendChild(option);
+      }
     });
 
     mapSelector.addEventListener('change', function(event) {
