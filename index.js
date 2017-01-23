@@ -213,8 +213,10 @@
       map.setView(config.center, config.zoom);
 
       fetch(config.url)
-      .then(resp => resp.text())
-      .then(payload => {
+      .then(function(resp) {
+        return resp.text();
+      })
+      .then(function(payload) {
         var geoJSON = JSON.parse(payload);
         if (config.useGeoJSON !== true) {
           geoJSON = topojson.feature(geoJSON, geoJSON.objects[mapId]);

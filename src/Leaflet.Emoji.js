@@ -55,8 +55,8 @@ L.Emoji = L.Layer.extend({
     this._geoJSON.features.forEach(function(feature) {
       if (feature.geometry) {
         var env = turf.envelope(feature).geometry.coordinates[0];
-        var envLng = env.map(ll => ll[0]);
-        var envLat = env.map(ll => ll[1]);
+        var envLng = env.map(function(ll) { return ll[0]; });
+        var envLat = env.map(function(ll) { return ll[1]; });
 
         this._polygons.push({
           feature: feature,
@@ -233,7 +233,7 @@ var EmojiLayer = L.Layer.extend({
     this._el.style.margin = 0;
     this._el.style.zIndex = 0;
     this._el.style.fontSize = this.options.size + 'px';
-    this._el.style.lineHeight = this.options.size + 'px';
+    this._el.style.lineHeight = 1;
     this._el.style.background = 'none';
     this._el.style.border = 'none';
     this._el.innerHTML = '';
@@ -248,7 +248,7 @@ var EmojiLayer = L.Layer.extend({
     this._el.style.width = w + 'px';
     this._el.style.height = h + 'px';
 
-    this._grid = grid.map(line => {
+    this._grid = grid.map(function(line) {
       return line.join('');
     }).join('\n');
 
