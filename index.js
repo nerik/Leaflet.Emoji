@@ -132,8 +132,7 @@
         }
       },
       emoji_landuse: {
-        hide: true,
-        name: 'Landcover of Île de Ré, France',
+        name: 'Landuse of Île de Ré, France',
         description: '🏠residential, ⛱️beach, 🏜️dune, 🌱grassland, ☘️meadow, 🌿scrub/heath, 💧water/basin/reservoir, 💦wetland/salt pond, 🌳wood/forest, 🏡farm, 🐮farmland, 🍇vineyard, 🍎orchard, 🌱greenhouse, ⚔️military, 🏭industrial, 💰commercial/retail, 🗿quarry, ✝️cemetery',
         source: '© OpenStreetMap contributors, European Union - SOeS, CORINE Land Cover, 2006.',
         url: 'example/data/emoji_landuse.geo.json',
