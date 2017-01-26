@@ -237,6 +237,8 @@ var EmojiLayer = L.Layer.extend({
     this._el.style.background = 'none';
     this._el.style.border = 'none';
     this._el.innerHTML = '';
+    //http://stackoverflow.com/questions/18259090/textarea-word-wrap-only-on-line-breaks
+    this._el.setAttribute('wrap', 'off');
 
     this._map.getPanes().overlayPane.appendChild(this._el);
 
