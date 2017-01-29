@@ -3,24 +3,28 @@ html, body, #map {
   width: 100%;
   padding: 0;
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Anonymous Pro', monospace;
 }
 
 #map {
-  height: calc(100% - 140px)
+  height: calc(100% - 50px)
 }
 
 header {
-  padding: 10px;
-  height: 120px
+  padding: 14px;
+  height: 36px;
+  background-color: rgb(31, 30, 28);
 }
 
 h1 {
   margin: 0 0 14px;
+  color: rgb(255, 255, 255);
 }
 
-h1 select {
-  font-size: 24px;
+h1 select, h1 button {
+  font-size: 20px;
+  font-family: 'Anonymous Pro', monospace;
+  color: rgb(31, 30, 28);
 }
 
 .description {
@@ -31,16 +35,23 @@ h1 select {
   margin-top: 5px;
 }
 
-.controls {
+.info {
   position: absolute;
   z-index: 999;
   top: 10px;
   right: 10px;
+  border-radius: 4px;
+  background: #fff;
+  padding: 14px;
+  border: 2px solid rgba(0,0,0,0.2);
+  max-width: 200px;
+  font-size: 14px;
 }
 
-.controls button {
-  font-size: 16px;
+.info > div:not(:last-child) {
+  margin-bottom: 14px;
 }
+
 
 .leaflet-container { background-color:rgba(255, 251, 219, 1); }
 

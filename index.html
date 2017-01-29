@@ -7,7 +7,7 @@
 
   <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
   <link rel="stylesheet" href="index.css" media="screen">
-  <link rel="shortcut icon" href="favicon.ico" />
+  <!-- <link href="https://fonts.googleapis.com/css?family=Anonymous+Pro:700" rel="stylesheet"> -->
 
   <script src="//localhost:9091"></script>
 </head>
@@ -16,20 +16,24 @@
 <body>
   <header>
     <h1>
-      Emoji maps:
+      Emoji maps.
       <select class="js-mapSelector">
       </select>
-    </h1>
-    <div class="js-description description"></div>
-    <div class="js-source source"></div>
-  </header>
-  <div id="map">
-    <div class="controls">
       <button class="copyBtn js-copyBtn">
         Copy to clipboard!
       </button>
+    </h1>
+    <div class="github">
+      <a href="https://twitter.com/nerik">@nerik.</a>
+      <a href="https://github.com/nerik/Leaflet.Emoji/">source code</a>
     </div>
-
+  </header>
+  <div id="map">
+    <div class="info">
+      <div class="js-description description"></div>
+      <div class="js-legend legend"></div>
+      <div class="js-source source"></div>
+    </div>
   </div>
 
   <script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,fetch"></script>

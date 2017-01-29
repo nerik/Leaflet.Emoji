@@ -11,8 +11,8 @@
         url: 'example/data/emoji_world_borders.topo.json',
         size: 18,
         showGeoJSON: false,
-        center: [50, 0],
-        zoom: 5,
+        center: [50, 10],
+        zoom: 4,
         emoji: function (feature) {
           if (!feature) {
             return L.Emoji.EMPTY;
@@ -22,7 +22,8 @@
       },
       emoji_iucn: {
         name: 'IUCN Endangered species',
-        description: 'This maps shows which taxonomic group has the most endangered species for each country of the world:<br>🐸 amphibians, 🐦 birds, 🐟 fishes, 🍄 fungi, 🐼 mammals, 🐌 molluscs, 🌺 plants, 🐍 reptiles, 🐝 other invertebrae',
+        description: 'This map shows which taxonomic group has the most endangered species for each country of the world',
+        legend: '🐸 amphibians<br> 🐦 birds<br> 🐟 fishes<br> 🍄 fungi<br> 🐼 mammals<br> 🐌 molluscs<br> 🌺 plants<br> 🐍 reptiles<br> 🐝 other invertebrae',
         source: 'IUCN',
         url: 'example/data/emoji_iucn.topo.json',
         size: 18,
@@ -59,7 +60,8 @@
       },
       emoji_us_states_hdi: {
         name: 'US States HDI',
-        description: 'A modified Human Development Index for the United States.<br>😵 <4.3, 🙁 4.3-4.6, 😐 4.6-4.9, 🙂 4.9-5.4, 😃 >5.4',
+        description: 'A modified Human Development Index for the United States.',
+        legend: '😵 <4.3<br>🙁 4.3-4.6<br>😐 4.6-4.9<br>🙂 4.9-5.4<br>😃 >5.4',
         source: 'Measure of America, 2013 - 2014 dataset',
         url: 'example/data/emoji_us_states_hdi.geojson',
         size: 18,
@@ -76,9 +78,8 @@
         }
       },
       emoji_nyc: {
-        hide: true,
         name: 'NY Census',
-        description: '<b>median age</b>: 👶 < 30, 👨 30-45 👴 >45 / <b>predominant ethnic group:</b> 👨🏻 caucasian, 👨🏽 hispanic or latino, 👨🏿 african american, 👨 asian',
+        description: '<b>median age</b>:<br>👶 <30<br>👨 30-45<br>👴 >45<br><br><b>predominant ethnic group:</b><br>👨🏻 caucasian<br>👨🏽 hispanic or latino<br>👨🏿 african american<br>👨 asian',
         source: 'US Census 2010',
         url: 'example/data/emoji_nyc.topo.json',
         size: 30,
@@ -133,7 +134,7 @@
       },
       emoji_landuse: {
         name: 'Landuse of Île de Ré, France',
-        description: '🏠residential, ⛱️beach, 🏜️dune, 🌱grassland, ☘️meadow, 🌿scrub/heath, 💧water/basin/reservoir, 💦wetland/salt pond, 🌳wood/forest, 🏡farm, 🐮farmland, 🍇vineyard, 🍎orchard, 🌱greenhouse, ⚔️military, 🏭industrial, 💰commercial/retail, 🗿quarry, ✝️cemetery',
+        legend: '🏠 residential<br> ⛱️ beach<br> 🏜 dune<br> 🌱 grassland<br> ☘️ meadow<br> 🌿 scrub/heath<br> 💧 water/basin/reservoir<br> 💦 wetland/salt pond<br> 🌳 wood/forest<br> 🏡 farm<br> 🐮 farmland<br> 🍇 vineyard<br> 🍎 orchard<br> 🌱 greenhouse<br> ⚔️ military<br> 🏭 industrial<br> 💰 commercial/retail<br> 🗿 quarry<br> ✝️ cemetery',
         source: '© OpenStreetMap contributors, European Union - SOeS, CORINE Land Cover, 2006.',
         url: 'example/data/emoji_landuse.geo.json',
         size: 18,
@@ -206,8 +207,9 @@
         return CONFIG[key].hide !== true;
       }).indexOf(mapId);
 
-      document.querySelector('.js-description').innerHTML = config.description;
-      document.querySelector('.js-source').innerHTML = 'source: ' + config.source;
+      document.querySelector('.js-description').innerHTML = (config.description) ? config.description : '';
+      document.querySelector('.js-legend').innerHTML = (config.legend) ? config.legend : '';
+      document.querySelector('.js-source').innerHTML = 'Source: ' + config.source;
 
       map.setView(config.center, config.zoom);
 
