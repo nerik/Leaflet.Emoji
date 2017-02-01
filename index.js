@@ -1,6 +1,13 @@
 (function() {
 
   function main() {
+    var earth = document.querySelector('.js-earth');
+    var currentEarth = 0;
+    setInterval(function() {
+      earth.innerHTML = ['🌎', '🌍', '🌏'][currentEarth];
+      currentEarth = (currentEarth === 2) ? 0 : currentEarth + 1;
+    }, 300);
+
     var mapSelector = document.querySelector('.js-mapSelector');
 
     var CONFIG = {

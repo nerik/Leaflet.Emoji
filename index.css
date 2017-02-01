@@ -40,6 +40,10 @@ h1 {
   margin-bottom: 20px;
 }
 
+.earth {
+  font-size: .6em;
+}
+
 .info {
   line-height: 1.6em;
 }
