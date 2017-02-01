@@ -7,8 +7,7 @@
 
   <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
   <link rel="stylesheet" href="index.css" media="screen">
-  <!-- <link href="https://fonts.googleapis.com/css?family=Anonymous+Pro:700" rel="stylesheet"> -->
-
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,800" rel="stylesheet">
   <script src="//localhost:9091"></script>
 </head>
 
@@ -16,23 +15,25 @@
 <body>
   <header>
     <h1>
-      Emoji maps.
-      <select class="js-mapSelector">
-      </select>
-      <button class="copyBtn js-copyBtn">
-        Copy to clipboard!
-      </button>
+      Emoji<br>maps
     </h1>
-    <div class="github">
-      <a href="https://twitter.com/nerik">@nerik.</a>
+    <p>
+      An experiment by <a href="https://twitter.com/nerik">@nerik</a> |
       <a href="https://github.com/nerik/Leaflet.Emoji/">source code</a>
-    </div>
-  </header>
-  <div id="map">
+    </p>
+    <select class="js-mapSelector">
+    </select>
     <div class="info">
       <div class="js-description description"></div>
       <div class="js-legend legend"></div>
       <div class="js-source source"></div>
+    </div>
+  </header>
+  <div id="map">
+    <div class="controls">
+      <button class="copyBtn js-copyBtn">
+        Copy to clipboard!
+      </button>
     </div>
   </div>
 

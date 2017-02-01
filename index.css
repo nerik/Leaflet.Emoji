@@ -3,49 +3,52 @@ html, body, #map {
   width: 100%;
   padding: 0;
   margin: 0;
-  font-family: 'Anonymous Pro', monospace;
+  font-family: 'Raleway', sans-serif;
 }
 
 #map {
-  height: calc(100% - 50px)
+  width: calc(100% - 400px);
 }
 
 header {
-  padding: 14px;
-  height: 36px;
+  position: absolute;
+  right: 0;
+  width: 400px;
+  height: 100%;
   background-color: rgb(31, 30, 28);
+  color: rgb(232, 232, 232);
+  overflow-y: scroll;
+}
+
+header > * {
+  margin: 0 40px;
+}
+
+header a {
+  color: rgb(232, 232, 232);
+  border-bottom: 1px solid rgba(232, 232, 232, .5);
+  text-decoration: none;
+}
+
+header a:hover {
+  border-bottom: 3px solid rgb(232, 232, 232);
 }
 
 h1 {
-  margin: 0 0 14px;
-  color: rgb(255, 255, 255);
+  font-size: 3em;
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
 
-h1 select, h1 button {
-  font-size: 20px;
-  font-family: 'Anonymous Pro', monospace;
-  color: rgb(31, 30, 28);
+.info {
+  line-height: 1.6em;
 }
 
 .description {
 }
 
 .source {
-  font-style: italic;
   margin-top: 5px;
-}
-
-.info {
-  position: absolute;
-  z-index: 999;
-  top: 10px;
-  right: 10px;
-  border-radius: 4px;
-  background: #fff;
-  padding: 14px;
-  border: 2px solid rgba(0,0,0,0.2);
-  max-width: 200px;
-  font-size: 14px;
 }
 
 .info > div:not(:last-child) {
