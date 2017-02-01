@@ -9,6 +9,7 @@
     }, 300);
 
     var mapSelector = document.querySelector('.js-mapSelector');
+    var mapSelectorTitle = document.querySelector('.js-mapSelectorTitle');
 
     var CONFIG = {
       emoji_world_borders: {
@@ -214,6 +215,7 @@
         return CONFIG[key].hide !== true;
       }).indexOf(mapId);
 
+      mapSelectorTitle.innerHTML = config.name + ' ▼';
       document.querySelector('.js-description').innerHTML = (config.description) ? config.description : '';
       document.querySelector('.js-legend').innerHTML = (config.legend) ? config.legend : '';
       document.querySelector('.js-source').innerHTML = 'Source: ' + config.source;
@@ -246,15 +248,20 @@
     Object.keys(CONFIG).forEach(function(mapId) {
       var config = CONFIG[mapId];
       if (config.hide !== true) {
-        var option = document.createElement('option');
-        option.setAttribute('value', mapId);
+        var option = document.createElement('div');
+        option.className = 'mapSelectorItem';
+        option.setAttribute('data-value', mapId);
         option.innerHTML = config.name;
         mapSelector.appendChild(option);
       }
     });
 
-    mapSelector.addEventListener('change', function(event) {
-      loadMap(event.target.value);
+    mapSelector.addEventListener('click', function(event) {
+      loadMap(event.target.getAttribute('data-value'));
+      mapSelector.classList.toggle('-expanded');
+    });
+    mapSelectorTitle.addEventListener('click', function() {
+      mapSelector.classList.toggle('-expanded');
     });
 
     var mapId = (document.location.hash !== '') ? document.location.hash.substr(1) : 'emoji_world_borders';

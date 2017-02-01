@@ -7,7 +7,7 @@
 
   <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
   <link rel="stylesheet" href="index.css" media="screen">
-  <!-- <link href="https://fonts.googleapis.com/css?family=Raleway:300,800" rel="stylesheet"> -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,800" rel="stylesheet">
   <script src="//localhost:9091"></script>
 </head>
 
@@ -21,8 +21,10 @@
       An experiment by <a href="https://twitter.com/nerik">@nerik</a> |
       <a href="https://github.com/nerik/Leaflet.Emoji/">source code</a>
     </p>
-    <select class="js-mapSelector">
-    </select>
+    <div class="mapSelector">
+      <div class="mapSelectorTitle"><span class="js-mapSelectorTitle"></span></div>
+      <div class="js-mapSelector mapSelectorItems"></div>
+    </div>
     <div class="info">
       <div class="js-description description"></div>
       <div class="js-legend legend"></div>
