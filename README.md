@@ -17,6 +17,7 @@ The goal is to produce copy-pastable thematic maps.
 - a sandbox to quickly experiment with GeoJSON files
 - support for overlapping polygons
 - support for points and lines (now only support polygons)
+- support for mapping from emoticons (ie, ;-))
 - not only render vector, but also raster layers
 - UTFGrid support?
 - better performance, better approach than the current naive one, ie "point in polygon in every polygon for every grid cell"
