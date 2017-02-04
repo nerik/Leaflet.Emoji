@@ -264,7 +264,7 @@
       mapSelector.classList.toggle('-expanded');
     });
 
-    var mapId = (document.location.hash !== '') ? document.location.hash.substr(1) : 'emoji_world_borders';
+    var mapId = (document.location.hash !== '') ? document.location.hash.substr(1) : 'emoji_nyc';
     loadMap(mapId);
 
   }
