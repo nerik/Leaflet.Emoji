@@ -87,7 +87,7 @@
       },
       emoji_nyc: {
         name: 'Manhattan and Brooklyn Census',
-        description: '<b>median age</b>:<br>👶 <30<br>👨 30-45<br>👴 >45<br><br><b>predominant ethnic group:</b><br>👨🏻 caucasian<br>👨🏽 hispanic or latino<br>👨🏿 african american<br>👨 asian',
+        description: '<b>median age</b>:<br>👶 <30<br>👨 30-45<br>👴 >45<br><br><b>predominant ethnic group:</b><br>👨🏻 asian<br>👨🏼 caucasian<br>👨🏽 hispanic or latino<br>👨🏿 african american',
         source: 'US Census 2010',
         url: 'example/data/emoji_nyc.topo.json',
         size: 30,
@@ -108,10 +108,10 @@
           if (medianAge > 30) medianAgeIndex = 1;
           if (medianAge > 45) medianAgeIndex = 2;
           return {
-            'white': ['👶🏻', '👨🏻', '👴🏻'],
+            'asian': ['👶🏻', '👨🏻', '👴🏻'],
+            'white': ['👶🏼', '👨🏼', '👴🏼'],
             'hispanic or latino': ['👶🏽', '👨🏽', '👴🏽'],
-            'black': ['👶🏿', '👨🏿', '👴🏿'],
-            'asian': ['👶', '👨', '👴']
+            'black': ['👶🏿', '👨🏿', '👴🏿']
           }[ethnicity][medianAgeIndex];
         }
       },
