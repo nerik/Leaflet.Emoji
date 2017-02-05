@@ -28,6 +28,49 @@
           return L.Emoji.getShortcode(':flag_' + feature.properties.iso2.toLowerCase() + ':');
         }
       },
+      emoji_nfl: {
+        name: 'NFL',
+        description: 'Most popular NFL team by state',
+        source: 'vividseats.com',
+        url: 'example/data/emoji_nfl.geojson',
+        size: 18,
+        showGeoJSON: false,
+        center: [50, -100],
+        zoom: 4,
+        useGeoJSON: true,
+        emoji: {
+          property: 'team',
+          values: {
+            'New York Giants': '🗽',
+            'Arizona Cardinals': '✝️',
+            'San Diego Chargers': '⚡',
+            'Denver Broncos': '🐴',
+            'Tampa Bay Buccaneers': '☠️',
+            'San Francisco 49ers': '🔢',
+            'Detroit Lions': '🐅',
+            'Indianapolis Colts': '🔫',
+            'Cincinnati Bengals': '🐯',
+            'New Orleans Saints': '👼',
+            'New England Patriots': '🇺🇸',
+            'Minnesota Vikings': '🤘',
+            'Carolina Panthers': '🐱',
+            'Dallas Cowboys': '🐮',
+            'Green Bay Packers': '💚',
+            'Pittsburgh Steelers': '🔩',
+            'Washington Redskins': '🏹',
+            'Seattle Seahawks': '🐦',
+            'Philadelphia Eagles': '🐦',
+            'Atlanta Falcons': '🐦',
+            'Baltimore Ravens': '🐦',
+            'Tennessee Titans': '🐭',
+            'Cleveland Browns': '🐶',
+            'Buffalo Bills': '🐃',
+            'Kansas City Chiefs': '🐺',
+            'Chicago Bears': '🐻'
+
+          }
+        }
+      },
       emoji_iucn: {
         name: 'IUCN Endangered species',
         description: 'This map shows which taxonomic group has the most endangered species for each country of the world',
