@@ -35,7 +35,7 @@
         url: 'example/data/emoji_nfl.geojson',
         size: 18,
         showGeoJSON: false,
-        center: [50, -100],
+        center: [40, -100],
         zoom: 4,
         useGeoJSON: true,
         emoji: {
