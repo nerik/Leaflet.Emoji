@@ -137,6 +137,7 @@
         showGeoJSON: false,
         center: [40.71, -73.98],
         zoom: 14,
+        showBasemap: true,
         emoji: function (feature) {
           if (!feature) {
             return L.Emoji.EMPTY;
@@ -193,6 +194,7 @@
         showGeoJSON: false,
         center: [46.1651,-1.3481],
         zoom: 14,
+        showBasemap: true,
         emoji: {
           property: 'natural_landuse',
           values: {
@@ -238,11 +240,10 @@
     var emoji;
 
     var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>' });
-    map.addLayer(basemap);
-    L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+    var labels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
       attribution: '©OpenStreetMap, ©CartoDB',
       pane: 'labels'
-    }).addTo(map);
+    });
 
     function loadMap(mapId) {
       if (emoji) {
@@ -253,6 +254,14 @@
       history.pushState(null, null, '#' + mapId);
 
       var config = CONFIG[mapId];
+
+      if (config.showBasemap === true) {
+        map.addLayer(basemap);
+        map.addLayer(labels);
+      } else {
+        map.removeLayer(basemap);
+        map.removeLayer(labels);
+      }
 
       mapSelector.selectedIndex = Object.keys(CONFIG).filter(function(key) {
         return CONFIG[key].hide !== true;
