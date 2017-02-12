@@ -32,11 +32,16 @@ header a,
   text-decoration: none;
 }
 
+
 header a:hover,
 .mapSelectorTitle:hover > span,
 .mapSelectorItem:hover > span {
   color: rgb(120, 219, 255);
   border-bottom: 2px solid rgb(120, 219, 255);
+}
+
+.mapSelectorItem > span {
+  pointer-events: none;
 }
 
 h1 {
