@@ -130,7 +130,7 @@
       },
       emoji_nyc: {
         name: 'Manhattan and Brooklyn Census',
-        description: '<b>median age</b>:<br>👶 <30<br>👨 30-45<br>👴 >45<br><br><b>predominant ethnic group:</b><br>👨🏻 asian<br>👨🏼 caucasian<br>👨🏽 hispanic or latino<br>👨🏿 african american',
+        legend: '<b>median age</b>:<br>👶 <30<br>👨 30-45<br>👴 >45<br><br><b>predominant ethnic group:</b><br>👨🏻 asian<br>👨🏼 caucasian<br>👨🏽 hispanic or latino<br>👨🏿 african american<br><br><b>bivariate choropleth</b><div class="biv-c"><span class="biv">&lt;35</span><span class="biv" style="left: 24px;">30-45</span><span class="biv" style="left: 48px;">&gt;45</span>👶🏻 👨🏻 👴🏻 &nbsp;&nbsp;asian<br>👶🏼 👨🏼 👴🏼 &nbsp;&nbsp;caucasian<br>👶🏽 👨🏽 👴🏽 &nbsp;&nbsp;hispanic or latino<br>👶🏿 👨🏿 👴🏿 &nbsp;&nbsp;african american</div>',
         source: 'US Census 2010',
         url: 'example/data/emoji_nyc.topo.json',
         size: 30,
