@@ -159,10 +159,16 @@ L.Emoji = L.Layer.extend({
     if (feature) {
       var value = feature.properties[options.emoji.property];
       if (value !== undefined) {
-        if (options.emoji.values && options.emoji.values[value]) {
-          return options.emoji.values[value];
+        if (options.emoji.values) {
+          if (options.emoji.values[value]) {
+            return options.emoji.values[value];
+          } else {
+            if (options.emoji.defaultValue) {
+              return options.emoji.defaultValue;
+            }
+          }
         }
-        if (options.emoji.classes) {
+        else if (options.emoji.classes) {
           return this._getClassFromValue(value, options.emoji.classes);
         }
       } else if (options.emoji.defaultValue) {
