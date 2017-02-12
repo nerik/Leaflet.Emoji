@@ -56,9 +56,9 @@ var emoji = L.emoji(geoJSON, {
     property: 'countryName',
     values: {
       'United Kingdom': '☂️'
-    }
+    },
     defaultValue: '☀️️',
-    emptyValue: '🐟',
+    emptyValue: '🐟'
   }  
 }).addTo(map);
 ```
