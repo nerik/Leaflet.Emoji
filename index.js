@@ -303,7 +303,9 @@
         var option = document.createElement('div');
         option.className = 'mapSelectorItem';
         option.setAttribute('data-value', mapId);
-        option.innerHTML = config.name;
+        var optionText = document.createElement('span');
+        optionText.innerHTML = config.name;
+        option.appendChild(optionText);
         mapSelector.appendChild(option);
       }
     });

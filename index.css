@@ -24,14 +24,19 @@ header > *, .mapSelector > * {
   margin: 0 40px;
 }
 
-header a, .mapSelectorTitle > span {
-  color: rgb(232, 232, 232);
-  border-bottom: 1px solid rgba(232, 232, 232, .5);
+header a,
+.mapSelectorTitle > span,
+.mapSelectorItem > span {
+  color: rgb(113, 203, 236);
+  border-bottom: 1px solid rgba(113, 203, 236, .3);
   text-decoration: none;
 }
 
-header a:hover {
-  border-bottom: 3px solid rgb(232, 232, 232);
+header a:hover,
+.mapSelectorTitle:hover > span,
+.mapSelectorItem:hover > span {
+  color: rgb(120, 219, 255);
+  border-bottom: 2px solid rgb(120, 219, 255);
 }
 
 h1 {
