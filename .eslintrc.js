@@ -4,6 +4,9 @@ module.exports = {
         "es6": true
     },
     "extends": "eslint:recommended",
+    "parserOptions": {
+      "sourceType": "module",
+    },
     "rules": {
         "indent": [
             "error",
@@ -20,11 +23,14 @@ module.exports = {
         "semi": [
             "error",
             "always"
+        ],
+        "no-console": [
+          "error",
+          { "allow": ["warn", "error"] }
         ]
     },
     "globals": {
       "L": false,
-      "turf": false,
       "topojson": false
     }
 };

@@ -5,11 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "eslint -c .eslintrc.js *.js",
-    "build": "true ",
+    "build": "rollup -c rollup.config.js",
+    "uglify": "uglify ./dist/Leaflet.Emoji.js -o dist/Leaflet.Emoji.min.js",
+    "shortcodes": "./scripts/getShortcodesTable.js > src/shortcodes.js",
+    "bundle": "npm run shortcodes && npm run build && npm run uglify",
     "livereload": "live-reload --port 9091 .",
     "open": "opener http://localhost:9094",
     "serve": "http-server -s -p 9094 .",
-    "dev": "npm run build -s && (sleep 1 && npm run open -s) &  npm run livereload -s & npm run serve",
+    "dev": "npm run build -s && (sleep 1 && npm run open -s) & npm run livereload -s & npm run serve",
     "start": "npm run dev"
   },
   "repository": {
@@ -26,13 +29,18 @@
   },
   "homepage": "https://github.com/nerik/generator-cartodb#readme",
   "devDependencies": {
+    "emoji-alpha-codes": "git+ssh://git@github.com/nerik/emoji-alpha-codes",
+    "eslint": "^2.0.0",
+    "grunt": "^1.0.1",
     "http-server": "^0.8.5",
     "live-reload": "^1.1.0",
     "opener": "^1.4.1",
-    "eslint": "^2.0.0",
-    "emoji-alpha-codes": "git+ssh://git@github.com/nerik/emoji-alpha-codes"
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "uglify-js": "^2.8.22"
   },
   "dependencies": {
-    "turf-inside": "^3.0.12"
+    "@turf/envelope": "^4.1.0",
+    "@turf/inside": "^4.1.0"
   }
 }

@@ -12,7 +12,6 @@ The goal is to produce copy-pastable thematic maps.
 
 ## Future plans
 
-- bundle this into a properly usable dependency
 - more use cases and demos
 - a sandbox to quickly experiment with GeoJSON files
 - support for overlapping polygons
@@ -28,6 +27,7 @@ The goal is to produce copy-pastable thematic maps.
 
 
 ### Basic usage
+
 ```
 var emoji = L.emoji(geoJSON, {
   emoji: '😊'

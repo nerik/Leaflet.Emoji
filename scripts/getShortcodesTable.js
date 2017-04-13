@@ -13,4 +13,5 @@ Object.keys(emojis).forEach(function(unicode) {
   }
   emojisByShortcodes[emoji.alpha_code] = decimalUnicodes;
 });
-console.log(emojisByShortcodes)
+console.log('export default');
+console.log(emojisByShortcodes);

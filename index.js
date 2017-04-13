@@ -291,7 +291,7 @@
 
     document.querySelector('.js-copyBtn').addEventListener('click', function() {
       if (emoji) {
-        console.log(emoji.getGrid());
+        console.warn(emoji.getGrid());
         emoji.copyGrid();
       }
     });
