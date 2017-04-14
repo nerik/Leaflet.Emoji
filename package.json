@@ -20,7 +20,7 @@
     "url": "git+https://github.com/nerik/generator-cartodb.git"
   },
   "keywords": [
-    "cartodb"
+    "emoji","leaflet"
   ],
   "author": "nerik",
   "license": "ISC",
