@@ -31,7 +31,6 @@
   "devDependencies": {
     "emoji-alpha-codes": "git+ssh://git@github.com/nerik/emoji-alpha-codes",
     "eslint": "^2.0.0",
-    "grunt": "^1.0.1",
     "http-server": "^0.8.5",
     "live-reload": "^1.1.0",
     "opener": "^1.4.1",
