@@ -24,7 +24,7 @@ L.VectorGrid = L.GridLayer.extend({
     };
 
     var tileUrl = L.Util.template(this._url, L.extend(data, this.options));
-    fetch(tileUrl).then(function(response) {
+    var vectorTilePromise = fetch(tileUrl).then(function(response) {
       return response.blob().then( function(blob) {
         var reader = new FileReader();
         return new Promise(function(resolve) {
@@ -41,12 +41,16 @@ L.VectorGrid = L.GridLayer.extend({
       // console.log(arguments);
     }).then(function(json){
 
-      console.log('Vector tile:', json.layers);
-      console.log('Vector tile water:', json.layers.water);  // Instance of VectorTileLayer
+      // console.log('Vector tile:', json.layers);
+      // console.log('Vector tile water:', json.layers.water);  // Instance of VectorTileLayer
 
       // Normalize feature getters into actual instanced features
       for (var layerName in json.layers) {
-        console.log(layerName)
+        if (['landcover','landuse','water'].indexOf(layerName) === -1) {
+          delete json.layers[layerName];
+          continue;
+        }
+        // console.log(layerName)
         var feats = [];
 
         for (var i=0; i<json.layers[layerName].length; i++) {
@@ -55,13 +59,24 @@ L.VectorGrid = L.GridLayer.extend({
           feats.push(feat);
         }
 
-        console.log(feats)
+        // console.log(feats)
 
         json.layers[layerName].features = feats;
       }
 
       return json;
     });
+
+    vectorTilePromise.then( function renderTile(vectorTile) {
+      // console.log(coords)
+      console.log(vectorTile)
+      for (var layerName in vectorTile.layers) {
+        var layer = vectorTile.layers[layerName];
+        var pxPerExtent = this.getTileSize().divideBy(layer.extent);
+        console.log(this.getTileSize(), layer.extent, pxPerExtent)
+      }
+    }.bind(this));
+
     // done();
     return L.DomUtil.create('div', '');
   }
