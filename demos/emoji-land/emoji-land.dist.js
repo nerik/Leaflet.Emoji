@@ -2383,33 +2383,33 @@ function uniq(array) {
 var uniq_1 = uniq;
 
 var emojiLegend = {
-  'beach': '⛱️',
-  'residential': '🏠',
-  'dune': '🏜️',
-  'grassland': '🌱',
-  'grass': '🌱',
-  'plant_nursery': '🌱',
-  'greenhouse_horticulture': '🌱',
-  'meadow': '☘️',
-  'scrub': '🌿',
-  'heath': '🌿',
-  'water': '💧',
-  'basin': '💧',
-  'reservoir': '💧',
-  'wetland': '💦',
-  'salt_pond': '💦',
-  'wood': '🌳',
-  'forest': '🌳',
-  'farm': '🏡',
-  'farmland': '🐮',
-  'vineyard': '🍇',
-  'orchard': '🍎',
-  'military': '⚔️',
-  'industrial': '🏭',
-  'commercial': '💰',
-  'retail': '💰',
-  'quarry': '🗿',
-  'cemetery': '✝️'
+  '⛱️': ['beach'],
+  '🏠': ['residential'],
+  '🏜️': ['dune'],
+  '🌱': ['grassland', 'grass', 'plant_nursery', 'greenhouse_horticulture'],
+  '☘️': ['meadow'],
+  '🌿': ['scrub','heath'],
+  '💧': ['water', 'basin', 'reservoir', 'lake', 'river'],
+  '💦': ['wetland', 'salt_pond'],
+  '🌊': ['ocean'],
+  '🌳': ['wood', 'forest'],
+  '🏡': ['farm'],
+  '🐮': ['farmland'],
+  '🍇': ['vineyard'],
+  '🍎': ['orchard'],
+  '⚔️': ['military'],
+  '⚙️': ['industrial'],
+  '💰': ['commercial','retail'],
+  '🗿': ['quarry'],
+  '✝️': ['cemetery'],
+  '🎒': ['kindergarten','school'],
+  '🎓': ['college', 'university'],
+  '🏥': ['hospital'],
+  '📖': ['library'],
+  '🛤': ['railway'],
+  '🏟': ['stadium'],
+  '🎭': ['theatre'],
+  '🚧': ['construction']
 };
 
 var geoJSON = {
@@ -2505,13 +2505,24 @@ L.VectorGrid = L.GridLayer.extend({
 
 var emoji;
 
+var allLandcoverClasses = {};
+Object.keys(emojiLegend).forEach(function(emoji) {
+  var landcoverClasses = emojiLegend[emoji];
+  landcoverClasses.forEach(function(landcoverClass) {
+    allLandcoverClasses[landcoverClass] = emoji;
+  });
+});
+console.log(emojiLegend);
+console.log(allLandcoverClasses);
+
 var CONFIG = {
   source: '© OpenStreetMap contributors, European Union - SOeS, CORINE Land Cover, 2006.',
   size: 20,
   showGeoJSON: true,
   emoji: {
     property: 'class',
-    values: emojiLegend
+    values: allLandcoverClasses,
+    defaultValue: '❓'
   }
 };
 
@@ -2538,7 +2549,7 @@ map.addLayer(labels);
 
 var url = 'https://free-0.tilehosting.com/data/v3/{z}/{x}/{y}.pbf.pict?key=iRnITVgsmrfcoqyulHKd';
 var vectorTileOptions = {
-  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, tiles courtesy of <a href="openmaptiles.com">OpenMapTiles</a>'
 };
 var vectorGrid = new L.VectorGrid(url, vectorTileOptions).addTo(map);
 
@@ -2552,10 +2563,11 @@ geocoder.addTo(map);
 
 var legend = document.querySelector('.js-legend');
 
+
 function getAllLandcoverClasses() {
   return uniq_1(geoJSON.features.map(function(feature) {
     return feature.properties.class;
-  }));
+  })).sort();
 }
 
 function update() {

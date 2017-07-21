@@ -97,13 +97,24 @@ L.VectorGrid = L.GridLayer.extend({
 
 var emoji;
 
+var allLandcoverClasses = {};
+Object.keys(emojiLegend).forEach(function(emoji) {
+  var landcoverClasses = emojiLegend[emoji];
+  landcoverClasses.forEach(function(landcoverClass) {
+    allLandcoverClasses[landcoverClass] = emoji;
+  });
+});
+console.log(emojiLegend)
+console.log(allLandcoverClasses)
+
 var CONFIG = {
   source: '© OpenStreetMap contributors, European Union - SOeS, CORINE Land Cover, 2006.',
   size: 20,
   showGeoJSON: true,
   emoji: {
     property: 'class',
-    values: emojiLegend
+    values: allLandcoverClasses,
+    defaultValue: '❓'
   }
 };
 
@@ -130,7 +141,7 @@ map.addLayer(labels);
 
 var url = 'https://free-0.tilehosting.com/data/v3/{z}/{x}/{y}.pbf.pict?key=iRnITVgsmrfcoqyulHKd';
 var vectorTileOptions = {
-  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, tiles courtesy of <a href="openmaptiles.com">OpenMapTiles</a>'
 };
 var vectorGrid = new L.VectorGrid(url, vectorTileOptions).addTo(map);
 
@@ -144,10 +155,11 @@ geocoder.addTo(map);
 
 var legend = document.querySelector('.js-legend');
 
+
 function getAllLandcoverClasses() {
   return uniq(geoJSON.features.map(function(feature) {
     return feature.properties.class;
-  }));
+  })).sort();
 }
 
 function update() {
