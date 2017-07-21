@@ -194,3 +194,11 @@ vectorGrid.on('tileunload', function() {
   // console.log('tileunload', tile, tile.uid,tile.geoJSON, JSON.stringify(tile.geoJSON));
   debouncedUpdate();
 });
+
+
+document.querySelector('.js-copyBtn').addEventListener('click', function() {
+  if (emoji) {
+    console.warn(emoji.getGrid());
+    emoji.copyGrid();
+  }
+});

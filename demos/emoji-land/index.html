@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="../index.css">
 
 </head>
-<body>
+<body class="landcover">
   <header>
     <h1>
       Em<span class="earth js-earth">🌎</span>ji<br>landcover
@@ -25,7 +25,13 @@
       <div class="js-legend legend"></div>
     </div>
   </header>
-  <div id="map"></div>
+  <div id="map">
+    <div class="controls">
+      <button class="copyBtn js-copyBtn">
+        Copy to clipboard!
+      </button>
+    </div>
+  </div>
   <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
   <script src="https://cdn.rawgit.com/mlevans/leaflet-hash/master/leaflet-hash.js"></script>
   <script src="https://mapzen.com/js/mapzen.standalone.min.js"></script>

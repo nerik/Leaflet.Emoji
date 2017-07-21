@@ -104,8 +104,11 @@ h1 {
 .controls {
   position: absolute;
   bottom: 10px;
-  left: 10px;
   z-index: 999;
+}
+
+.landcover .controls {
+  left: 60px;
 }
 
 .copyBtn {
@@ -115,7 +118,7 @@ h1 {
   font-size: 1.3em;
   border-radius: 4px;
   background: white;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
   border: 1px solid #ccc;
 }
 

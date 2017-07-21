@@ -2603,4 +2603,12 @@ vectorGrid.on('tileunload', function() {
   debouncedUpdate();
 });
 
+
+document.querySelector('.js-copyBtn').addEventListener('click', function() {
+  if (emoji) {
+    console.warn(emoji.getGrid());
+    emoji.copyGrid();
+  }
+});
+
 }());
