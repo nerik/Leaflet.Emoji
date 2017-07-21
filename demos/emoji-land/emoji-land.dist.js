@@ -1273,17 +1273,24 @@ L.VectorGrid = L.GridLayer.extend({
     return tile;
   }
 });
-var map = L.map('map', {    });
+var map = L.map('map', {
+  minZoom: 14
+});
+
+map.zoomControl.setPosition('bottomleft');
+
+new L.Hash(map);
+
+// var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '' });
+// map.addLayer(basemap);
 map.createPane('labels');
 map.getPane('labels').style.zIndex = 650;
 map.getPane('labels').style.pointerEvents = 'none';
-// var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '' });
 var labels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
   attribution: '©CartoDB',
   pane: 'labels'
 });
-map.setView([46.1651,-1.3481], 14);
-// map.addLayer(basemap);
+// map.setView([46.1651,-1.3481], 14);
 map.addLayer(labels);
 
 var url = 'https://free-0.tilehosting.com/data/v3/{z}/{x}/{y}.pbf.pict?key=iRnITVgsmrfcoqyulHKd';
@@ -1291,6 +1298,13 @@ var vectorTileOptions = {
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 };
 var vectorGrid = new L.VectorGrid(url, vectorTileOptions).addTo(map);
+
+L.Mapzen.apiKey = 'mapzen-C2oYTd7';
+var geocoder = L.Mapzen.geocoder({
+  expanded: true,
+  layers: ['coarse']
+});
+geocoder.addTo(map);
 
 vectorGrid.on('tileloadstart', function() {
   // console.log('tileloadstart', arguments)
