@@ -6,22 +6,25 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Emoji landcover</title>
   <script src="//localhost:9091"></script>
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,800" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
   <link rel="stylesheet" href="https://mapzen.com/js/mapzen.standalone.css">
-  <style media="screen">
-    html, body, #map {
-      height: 100%;
-      width: 100%;
-      padding: 0;
-      margin: 0;
-    }
+  <link rel="stylesheet" href="../index.css">
 
-    textarea {
-      /*display: none;*/
-    }
-  </style>
 </head>
 <body>
+  <header>
+    <h1>
+      Em<span class="earth js-earth">🌎</span>ji<br>landcover
+    </h1>
+    <p>
+      An experiment by <a href="https://twitter.com/nerik">@nerik</a> |
+      <a href="https://github.com/nerik/Leaflet.Emoji/">source code</a>
+    </p>
+    <div class="info">
+      <div class="js-legend legend"></div>
+    </div>
+  </header>
   <div id="map"></div>
   <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
   <script src="https://cdn.rawgit.com/mlevans/leaflet-hash/master/leaflet-hash.js"></script>

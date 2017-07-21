@@ -1,49 +1,8 @@
 import Pbf from 'pbf';
 import { VectorTile } from 'vector-tile';
 import debounce from 'lodash/debounce';
-
-var emoji;
-
-var CONFIG = {
-  name: 'Landuse of Île de Ré, France',
-  legend: '🏠 residential<br> ⛱️ beach<br> 🏜 dune<br> 🌱 grassland<br> ☘️ meadow<br> 🌿 scrub/heath<br> 💧 water/basin/reservoir<br> 💦 wetland/salt pond<br> 🌳 wood/forest<br> 🏡 farm<br> 🐮 farmland<br> 🍇 vineyard<br> 🍎 orchard<br> 🌱 greenhouse<br> ⚔️ military<br> 🏭 industrial<br> 💰 commercial/retail<br> 🗿 quarry<br> ✝️ cemetery',
-  source: '© OpenStreetMap contributors, European Union - SOeS, CORINE Land Cover, 2006.',
-  size: 18,
-  showGeoJSON: true,
-  emoji: {
-    property: 'class',
-    values: {
-      'residential': '🏠',
-      'beach': '⛱️',
-      'dune': '🏜️',
-      'grassland': '🌱',
-      'grass': '🌱',
-      'meadow': '☘️',
-      'scrub': '🌿',
-      'heath': '🌿',
-      'water': '💧',
-      'basin': '💧',
-      'reservoir': '💧',
-      'wetland': '💦',
-      'salt_pond': '💦',
-      'wood': '🌳',
-      'forest': '🌳',
-      'farm': '🏡',
-      'farmland': '🐮',
-      'vineyard': '🍇',
-      'orchard': '🍎',
-      'plant_nursery': '🌱',
-      'greenhouse_horticulture': '🌱',
-      'military': '⚔️',
-      'industrial': '🏭',
-      'commercial': '💰',
-      'retail': '💰',
-      'quarry': '🗿',
-      'cemetery': '✝️'
-    }
-  }
-};
-
+import uniq from 'lodash/uniq';
+import emojiLegend from './emoji-land-legend';
 
 var geoJSON = {
   type: 'FeatureCollection',
@@ -134,6 +93,21 @@ L.VectorGrid = L.GridLayer.extend({
     return tile;
   }
 });
+
+
+var emoji;
+
+var CONFIG = {
+  source: '© OpenStreetMap contributors, European Union - SOeS, CORINE Land Cover, 2006.',
+  size: 20,
+  showGeoJSON: true,
+  emoji: {
+    property: 'class',
+    values: emojiLegend
+  }
+};
+
+
 var map = L.map('map', {
   minZoom: 14
 });
@@ -168,16 +142,30 @@ var geocoder = L.Mapzen.geocoder({
 geocoder.addTo(map);
 
 
+var legend = document.querySelector('.js-legend');
+
+function getAllLandcoverClasses() {
+  return uniq(geoJSON.features.map(function(feature) {
+    return feature.properties.class;
+  }));
+}
+
 function update() {
   if (emoji) {
     emoji.remove();
     emoji = null;
   }
-  //
+
   var n = performance.now()
   emoji = L.emoji(geoJSON, CONFIG).addTo(map);
-  // console.log('tileload', tile.geoJSON, tile.uid);
   console.log(performance.now() - n);
+
+  const landcoverClasses = getAllLandcoverClasses();
+  legend.innerHTML = landcoverClasses.map(function(landcoverClass) {
+    const emoji = CONFIG.emoji.values[landcoverClass] || '❓';
+    return `${emoji} ${landcoverClass}<br>`;
+  }).join('');
+  console.log(landcoverClasses);
 }
 
 var debouncedUpdate = debounce(update, 800);
