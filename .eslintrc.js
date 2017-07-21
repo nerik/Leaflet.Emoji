@@ -20,13 +20,9 @@ module.exports = {
             "error",
             "single"
         ],
-        "semi": [
-            "error",
-            "always"
-        ],
         "no-console": [
           "error",
-          { "allow": ["warn", "error"] }
+          { "allow": ["warn", "error","log"] }
         ]
     },
     "globals": {
