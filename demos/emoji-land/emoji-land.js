@@ -1,5 +1,6 @@
 import Pbf from 'pbf';
-import {VectorTile} from 'vector-tile';
+import { VectorTile } from 'vector-tile';
+import debounce from 'lodash/debounce';
 
 var emoji;
 
@@ -166,10 +167,8 @@ var geocoder = L.Mapzen.geocoder({
 });
 geocoder.addTo(map);
 
-vectorGrid.on('tileloadstart', function() {
-  // console.log('tileloadstart', arguments)
-});
-vectorGrid.on('tileload', function() {
+
+function update() {
   if (emoji) {
     emoji.remove();
     emoji = null;
@@ -178,9 +177,20 @@ vectorGrid.on('tileload', function() {
   var n = performance.now()
   emoji = L.emoji(geoJSON, CONFIG).addTo(map);
   // console.log('tileload', tile.geoJSON, tile.uid);
-  console.log(performance.now() - n)
+  console.log(performance.now() - n);
+}
+
+var debouncedUpdate = debounce(update, 800);
+
+
+vectorGrid.on('tileloadstart', function() {
+  // console.log('tileloadstart', arguments)
+});
+vectorGrid.on('tileload', function() {
+  debouncedUpdate();
 });
 
 vectorGrid.on('tileunload', function() {
   // console.log('tileunload', tile, tile.uid,tile.geoJSON, JSON.stringify(tile.geoJSON));
+  debouncedUpdate();
 });
