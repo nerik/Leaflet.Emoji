@@ -140,6 +140,7 @@ var labels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}
 map.addLayer(labels);
 
 var url = 'https://free-0.tilehosting.com/data/v3/{z}/{x}/{y}.pbf.pict?key=iRnITVgsmrfcoqyulHKd';
+// var url = 'http://localhost:7070/{z}/{x}/{y}.pbf';
 var vectorTileOptions = {
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, tiles courtesy of <a href="openmaptiles.com">OpenMapTiles</a>'
 };

@@ -1,7 +1,6 @@
 var EMPTY = '　';
+var COLORS = Math.pow(2, 24);
 
-import turfinside from '@turf/inside';
-import turfenvelope from '@turf/envelope';
 import shortcodes from './shortcodes';
 
 var getShortcode = function(emoji) {
@@ -25,10 +24,7 @@ L.Emoji = L.Layer.extend({
     var preparedOptions = this._matchShortcodes(options);
     L.Util.setOptions(this, preparedOptions);
 
-    // simplify polygons for faster PiP
-    // TODO fine tune for each each z change
     this._geoJSON = geoJSON;
-    // this._geoJSON = turf.simplify(geoJSON, 0.05, false);
   },
 
   onRemove: function() {
@@ -41,38 +37,35 @@ L.Emoji = L.Layer.extend({
 
   onAdd: function(map) {
     this._map = map;
+    this._geoJSONRenderer = L.canvas({
+      padding: 0
+    });
+
+    this._featuresByColor = {};
+    var that = this;
+    this._geoJSONLayer = L.geoJSON(this._geoJSON, {
+      renderer: this._geoJSONRenderer,
+      style: function (feature) {
+        // feature.properties.r = Math.floor(255 * Math.random());
+        // feature.properties.g = Math.floor(255 * Math.random());
+        // feature.properties.b = Math.floor(255 * Math.random());
+        var color = '#' + Math.floor(COLORS * Math.random()).toString(16);
+        that._featuresByColor[color] = feature;
+        return {
+          fillColor: color,
+          fillOpacity: 1,
+          stroke: false
+        };
+      }
+    });
+    this._geoJSONLayer.addTo(this._map);
 
     if (this.options.showGeoJSON) {
-      this._geoJSONLayer = L.geoJSON(this._geoJSON, {
-        style: function () {
-          return {color: 'rgba(50, 50, 50, 0.5)', weight: 1, fill: false};
-        }
-      });
-      this._geoJSONLayer.addTo(this._map);
+      // TODO make visible or not
     }
 
     this._layer = new EmojiLayer({size: this.options.size});
     this._layer.addTo(this._map);
-
-    // get polygons envelope
-    this._polygons = [];
-    this._geoJSON.features.forEach(function(feature) {
-      if (feature.geometry) {
-        var env = turfenvelope(feature).geometry.coordinates[0];
-        var envLng = env.map(function(ll) { return ll[0]; });
-        var envLat = env.map(function(ll) { return ll[1]; });
-
-        this._polygons.push({
-          feature: feature,
-          envelope: {
-            wLng: Math.min.apply(Math, envLng),
-            sLat: Math.min.apply(Math, envLat),
-            eLng: Math.max.apply(Math, envLng),
-            nLat: Math.max.apply(Math, envLat)
-          }
-        });
-      }
-    }.bind(this));
 
     this._setGrid();
     this._map.on('moveend', this._setGrid, this);
@@ -87,56 +80,105 @@ L.Emoji = L.Layer.extend({
   },
 
   _setGrid: function() {
-    var polygonsInViewport = [];
-
     var size = this.options.size;
 
     var computedStyle = window.getComputedStyle(this._map._container);
     var viewportWidth = parseFloat(computedStyle.width);
     var viewportHeight = parseFloat(computedStyle.height);
 
+    console.log('size', size)
+    console.log(viewportWidth, viewportHeight)
     // add the extra emoji to match the exact grid size
     viewportWidth += size - (viewportWidth % size);
     viewportHeight += size - (viewportHeight % size);
 
-    var viewportNW = this._map.containerPointToLatLng([0, 0]);
-    var viewportSE = this._map.containerPointToLatLng([viewportWidth, viewportHeight]);
-    for (var i = 0; i < this._polygons.length; i++) {
-      var poly = this._polygons[i];
-      if ( !(poly.envelope.eLng < viewportNW.lng ||
-        poly.envelope.wLng > viewportSE.lng ||
-        poly.envelope.sLat > viewportNW.lat ||
-        poly.envelope.nLat < viewportSE.lat)) {
-        polygonsInViewport.push(poly.feature);
-      }
+    var imageData = this._geoJSONRenderer._ctx.getImageData(0, 0, viewportWidth, viewportHeight);
+
+    this._layer._canvas.getContext('2d').putImageData(imageData, 0, 0)
+
+    // console.log(imageData)
+    // console.log(viewportWidth, viewportHeight)
+
+    var t = performance.now();
+
+    var values2 = [];
+
+    function componentToHex(c) {
+      var hex = c.toString(16);
+      return hex.length == 1 ? '0' + hex : hex;
     }
 
-    var values = [];
+    function rgbToHex(r, g, b) {
+      return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    }
 
-    for (var y = 0; y < viewportHeight; y += size) {
+    function getCellColor(imageData, initOffset, cellSize, totalWidth) {
+      var offsetPx = initOffset;
+      var totalPx = cellSize * cellSize;
+      var cellColors = {};
+      for (var px = 0; px < totalPx - 20; px++) {
+        var arrOffset = offsetPx * 4;
+
+        var r = imageData.data[arrOffset];
+        var g = imageData.data[arrOffset + 1];
+        var b = imageData.data[arrOffset + 2];
+        var rgb = rgbToHex(r, g, b);
+
+        if (cellColors[rgb]) {
+          cellColors[rgb]++;
+        } else {
+          cellColors[rgb] = 1;
+        }
+
+        if (y % cellSize === 0) {
+          offsetPx += totalWidth - cellSize;
+        } else {
+          offsetPx++;
+        }
+      }
+
+      var max = 0;
+      var finalColor;
+      Object.keys(cellColors).forEach(function(color) {
+        var num = cellColors[color];
+        if (num > max) {
+          finalColor = color;
+          max = num;
+        }
+      });
+      console.log(cellColors, finalColor);
+
+      return finalColor;
+    }
+
+    for (var y = 0; y < viewportHeight - 100; y += size) {
       var line = [];
-      for (var x = 0; x < viewportWidth; x += size) {
-        var ll = this._map.containerPointToLatLng([x + size/2, y + size/2]);
-        var emoji = null;
-        for (i = 0; i < polygonsInViewport.length; i++) {
-          var feature = polygonsInViewport[i];
-          var inside = turfinside([ll.lng, ll.lat], feature);
-          if (inside === true) {
-            emoji = this._getEmoji(feature, this.options);
-            break;
-          }
-        }
-        if (!emoji) {
-          emoji = this._getEmoji(null, this.options);
-        }
+      var rowOffset = viewportWidth * y;
+      for (var x = 0; x < viewportWidth - 100; x += size) {
+        var pixelOffset = rowOffset + x;
+        var rgb = getCellColor(imageData, pixelOffset, size, viewportWidth);
+
+        // var r = imageData.data[arrOffset];
+        // var g = imageData.data[arrOffset + 1];
+        // var b = imageData.data[arrOffset + 2];
+        // var feature = null;
+        // var emoji = null;
+        // if (r !== 0 && g !== 0 && b !== 0) {
+        //   var rgb = rgbToHex(r, g, b);
+        //   // console.log(r, g, b)
+        //   // console.log(pixelOffset)
+        //   feature = this._featuresByColor[rgb];
+        // }
+        var emoji = this._getEmoji(this._featuresByColor[rgb], this.options);
         line.push(emoji);
       }
-      values.push(line);
+      values2.push(line);
     }
 
-    // console.log(values)
+    console.log(performance.now()- t);
+    this._layer.setGrid(values2, viewportWidth, viewportHeight);
+    console.log(values2)
 
-    this._layer.setGrid(values, viewportWidth, viewportHeight);
   },
 
   _getEmojiMethod: function(options) {
@@ -238,6 +280,13 @@ var EmojiLayer = L.Layer.extend({
   onAdd: function(map) {
     this._map = map;
     var classes = 'leaflet-emoji leaflet-zoom-hide';
+    this._canvas = L.DomUtil.create('canvas');
+    this._canvas.setAttribute('width', 1200);
+    this._canvas.setAttribute('height', 1200);
+    this._canvas.style.position = 'absolute';
+    this._canvas.style.top = 0;
+    this._canvas.style.left = 0;
+    console.log(this._canvas)
     this._el = L.DomUtil.create('textarea', classes);
     this._el.style.position = 'absolute';
     this._el.style.margin = 0;
@@ -251,6 +300,7 @@ var EmojiLayer = L.Layer.extend({
     this._el.setAttribute('wrap', 'off');
 
     this._map.getPanes().overlayPane.appendChild(this._el);
+    document.body.appendChild(this._canvas);
 
     // TODO also fire on animation?
     this._map.on('moveend', this._onMove, this);

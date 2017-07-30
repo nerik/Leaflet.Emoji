@@ -191,10 +191,10 @@
         url: 'demos/data/emoji_landuse.geo.json',
         size: 18,
         useGeoJSON: true,
-        showGeoJSON: false,
+        showGeoJSON: true,
         center: [46.1651,-1.3481],
         zoom: 14,
-        showBasemap: true,
+        showBasemap: false,
         emoji: {
           property: 'natural_landuse',
           values: {
@@ -246,6 +246,7 @@
     });
 
     function loadMap(mapId) {
+      console.log('plip')
       if (emoji) {
         emoji.remove();
         emoji = null;

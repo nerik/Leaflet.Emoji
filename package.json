@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "eslint -c .eslintrc.js src/*.js demos/**/*.js",
-    "build": "rollup -c ./config/rollup.config.js",
+    "build": "rollup -w -c ./config/rollup.config.js",
     "build-demo-emoji-land": "rollup -w -c ./demos/emoji-land/config/rollup.config.js",
     "uglify": "uglify ./dist/Leaflet.Emoji.js -o dist/Leaflet.Emoji.min.js",
     "shortcodes": "./scripts/getShortcodesTable.js > src/shortcodes.js",
@@ -13,9 +13,8 @@
     "livereload": "live-reload --port 9091 .",
     "open": "opener http://localhost:9094",
     "serve": "http-server -s -p 9094 .",
-    "dev": "npm run build-demo-emoji-land -s && (sleep 1 && npm run open -s) & npm run livereload -s & npm run serve",
-    "lint": "eslint -c .eslintrc.js src demos/emoji-land/emoji-land.js",
-    "start": "npm run dev"
+    "dev": "npm run build -s && (sleep 1 && npm run open -s) & npm run livereload -s & npm run serve",
+    "lint": "eslint -c .eslintrc.js src demos/emoji-land/emoji-land.js"
   },
   "repository": {
     "type": "git",
@@ -27,23 +26,22 @@
   ],
   "author": "nerik",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/nerik/generator-cartodb/issues"
-  },
-  "homepage": "https://github.com/nerik/generator-cartodb#readme",
   "devDependencies": {
     "emoji-alpha-codes": "git+ssh://git@github.com/nerik/emoji-alpha-codes",
     "eslint": "^2.0.0",
     "http-server": "^0.8.5",
     "live-reload": "^1.1.0",
+    "lodash": "^4.17.4",
     "opener": "^1.4.1",
     "pbf": "^3.0.5",
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-watch": "^4.0.0",
+    "@mapbox/mbtiles": "^0.9.0",
+    "@mapbox/tilelive": "^5.12.6",
+    "express": "^4.15.3",
     "uglify-js": "^2.8.22",
-    "vector-tile": "^1.3.0",
-    "lodash": "^4.17.4"
+    "vector-tile": "^1.3.0"
   },
   "dependencies": {
     "@turf/envelope": "^4.1.0",

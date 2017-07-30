@@ -140,3 +140,11 @@ h1 {
 .leaflet-emoji {
   text-shadow: 2px 2px 2px rgba(0,0,0,.4);
 }
+
+textarea {
+  /*display: none;*/
+}
+
+.leaflet-map-pane canvas {
+  z-index: 0;
+}
