@@ -2376,8 +2376,6 @@ var shortcodes = { ':interrobang:': [ 8265 ],
   ':part_alternation_mark:': [ 12349 ] };
 
 var EMPTY = '　';
-var COLORS = Math.pow(2, 24);
-
 var getShortcode = function(emoji) {
   var shortcode = L.Emoji.SHORTCODES[emoji];
   if (shortcode) {
@@ -2418,14 +2416,37 @@ L.Emoji = L.Layer.extend({
 
     this._featuresByColor = {};
     var that = this;
+    var n = 0;
+    var c = 0;
+    var t = performance.now();
+
+    var colorByEmojis = {};
+    this._emojisByColor = [];
+
     this._geoJSONLayer = L.geoJSON(this._geoJSON, {
       renderer: this._geoJSONRenderer,
       style: function (feature) {
+
+        var emoji = that._getEmoji(feature, that.options);
+        if (!colorByEmojis[emoji]) {
+          colorByEmojis[emoji] = c;
+          that._emojisByColor[c] = emoji;
+
+          // if pixel values are too close, gives a lot of errors
+          c += 10;
+        }
+
+        var hex = colorByEmojis[emoji].toString(16);
+        hex = hex.length == 1 ? '0' + hex : hex;
+        var color = '#' + hex + '0000';
+        n++;
+
         // feature.properties.r = Math.floor(255 * Math.random());
         // feature.properties.g = Math.floor(255 * Math.random());
         // feature.properties.b = Math.floor(255 * Math.random());
-        var color = '#' + Math.floor(COLORS * Math.random()).toString(16);
-        that._featuresByColor[color] = feature;
+
+        // var color = '#' + Math.floor(COLORS * Math.random()).toString(16);
+        // that._featuresByColor[color] = feature;
         return {
           fillColor: color,
           fillOpacity: 1,
@@ -2433,6 +2454,10 @@ L.Emoji = L.Layer.extend({
         };
       }
     });
+    console.log(performance.now()- t);
+    console.log(colorByEmojis);
+
+    console.log(n);
     this._geoJSONLayer.addTo(this._map);
 
     if (this.options.showGeoJSON) {
@@ -2476,83 +2501,136 @@ L.Emoji = L.Layer.extend({
 
     var t = performance.now();
 
-    var values2 = [];
+    var emojiLines = [];
+    var emojiLineColors = [];
+    var numPixels = imageData.data.length / 4;
+    var numPixelsEmojiLine = viewportWidth * size;
 
-    function componentToHex(c) {
-      var hex = c.toString(16);
-      return hex.length == 1 ? '0' + hex : hex;
-    }
+    // should be an exact divisor of size
+    var pxIncrement = 6;
 
-    function rgbToHex(r, g, b) {
-      return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
-    }
 
-    function getCellColor(imageData, initOffset, cellSize, totalWidth) {
-      var offsetPx = initOffset;
-      var totalPx = cellSize * cellSize;
-      var cellColors = {};
-      for (var px = 0; px < totalPx - 20; px++) {
-        var arrOffset = offsetPx * 4;
+    for (var i = 0; i < numPixels; i += pxIncrement) {
+      var linePxIndex = i % viewportWidth;
+      var lineCellIndex = Math.floor(linePxIndex / size);
+      // if (i < 20000) {
+      //
+      //   // console.log(lineCellIndex)
+      // }
 
-        var r = imageData.data[arrOffset];
-        var g = imageData.data[arrOffset + 1];
-        var b = imageData.data[arrOffset + 2];
-        var rgb = rgbToHex(r, g, b);
-
-        if (cellColors[rgb]) {
-          cellColors[rgb]++;
-        } else {
-          cellColors[rgb] = 1;
-        }
-
-        if (y % cellSize === 0) {
-          offsetPx += totalWidth - cellSize;
-        } else {
-          offsetPx++;
-        }
+      if (!emojiLineColors[lineCellIndex]) {
+        emojiLineColors[lineCellIndex] = [];
       }
 
-      var max = 0;
-      var finalColor;
-      Object.keys(cellColors).forEach(function(color) {
-        var num = cellColors[color];
-        if (num > max) {
-          finalColor = color;
-          max = num;
-        }
-      });
-      console.log(cellColors, finalColor);
-
-      return finalColor;
-    }
-
-    for (var y = 0; y < viewportHeight - 100; y += size) {
-      var line = [];
-      var rowOffset = viewportWidth * y;
-      for (var x = 0; x < viewportWidth - 100; x += size) {
-        var pixelOffset = rowOffset + x;
-        var rgb = getCellColor(imageData, pixelOffset, size, viewportWidth);
-
-        // var r = imageData.data[arrOffset];
+      var arrOffset = i * 4;
+      if (imageData.data[arrOffset + 3] > 0) {
+        var r = imageData.data[arrOffset];
         // var g = imageData.data[arrOffset + 1];
         // var b = imageData.data[arrOffset + 2];
-        // var feature = null;
-        // var emoji = null;
-        // if (r !== 0 && g !== 0 && b !== 0) {
-        //   var rgb = rgbToHex(r, g, b);
-        //   // console.log(r, g, b)
-        //   // console.log(pixelOffset)
-        //   feature = this._featuresByColor[rgb];
-        // }
-        var emoji = this._getEmoji(this._featuresByColor[rgb], this.options);
-        line.push(emoji);
+        // var rgb = rgbToHex(r, g, b);
+
+        if (emojiLineColors[lineCellIndex][r]) {
+          emojiLineColors[lineCellIndex][r]++;
+        } else {
+          emojiLineColors[lineCellIndex][r] = 1;
+        }
       }
-      values2.push(line);
+
+      if (i> 0 && i % numPixelsEmojiLine === 0) {
+        // console.log('new emoji Line',  i);
+        // console.log(emojiLineColors);
+        var emojiLine = [];
+        emojiLineColors.forEach(function (cellColors) {
+          var max = 0;
+          var finalColor;
+          Object.keys(cellColors).forEach(function(color) {
+            var num = cellColors[parseInt(color)];
+            if (num > max) {
+              finalColor = parseInt(color);
+              max = num;
+            }
+          });
+          // console.log(cellColors, finalColor);
+          if (finalColor !== undefined && !this._emojisByColor[finalColor]) {
+            console.log('!!!!', finalColor);
+          }
+          var emoji = (finalColor) ? this._emojisByColor[finalColor] : EMPTY;
+          // var emoji = this._getEmoji(this._featuresByColor[finalColor], this.options);
+          emojiLine.push(emoji);
+        }.bind(this));
+        emojiLines.push(emojiLine);
+        emojiLineColors = [];
+      }
     }
+    //
+    //
+    //
+    // function getCellColor(imageData, initOffset, cellSize, totalWidth) {
+    //   var offsetPx = initOffset;
+    //   var totalPx = cellSize * cellSize;
+    //   var cellColors = {};
+    //   for (var px = 0; px < totalPx - 20; px++) {
+    //     var arrOffset = offsetPx * 4;
+    //
+    //     var r = imageData.data[arrOffset];
+    //     var g = imageData.data[arrOffset + 1];
+    //     var b = imageData.data[arrOffset + 2];
+    //     var rgb = rgbToHex(r, g, b);
+    //
+    //     if (cellColors[rgb]) {
+    //       cellColors[rgb]++;
+    //     } else {
+    //       cellColors[rgb] = 1;
+    //     }
+    //
+    //     if (y % cellSize === 0) {
+    //       offsetPx += totalWidth - cellSize;
+    //     } else {
+    //       offsetPx++;
+    //     }
+    //   }
+    //
+    //   var max = 0;
+    //   var finalColor;
+    //   Object.keys(cellColors).forEach(function(color) {
+    //     var num = cellColors[color];
+    //     if (num > max) {
+    //       finalColor = color;
+    //       max = num;
+    //     }
+    //   });
+    //   console.log(cellColors, finalColor);
+    //
+    //   return finalColor;
+    // }
+    //
+    // for (var y = 0; y < viewportHeight - 100; y += size) {
+    //   var line = [];
+    //   var rowOffset = viewportWidth * y;
+    //   for (var x = 0; x < viewportWidth - 100; x += size) {
+    //     var pixelOffset = rowOffset + x;
+    //     var rgb = getCellColor(imageData, pixelOffset, size, viewportWidth);
+    //
+    //     // var r = imageData.data[arrOffset];
+    //     // var g = imageData.data[arrOffset + 1];
+    //     // var b = imageData.data[arrOffset + 2];
+    //     // var feature = null;
+    //     // var emoji = null;
+    //     // if (r !== 0 && g !== 0 && b !== 0) {
+    //     //   var rgb = rgbToHex(r, g, b);
+    //     //   // console.log(r, g, b)
+    //     //   // console.log(pixelOffset)
+    //     //   feature = this._featuresByColor[rgb];
+    //     // }
+    //     var emoji = this._getEmoji(this._featuresByColor[rgb], this.options);
+    //     line.push(emoji);
+    //   }
+    //   values.push(line);
+    // }
 
     console.log(performance.now()- t);
-    this._layer.setGrid(values2, viewportWidth, viewportHeight);
-    console.log(values2);
+    this._layer.setGrid(emojiLines, viewportWidth, viewportHeight);
+    // console.log(emojiLines)
 
   },
 
