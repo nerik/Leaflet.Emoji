@@ -54,13 +54,18 @@ L.Emoji = L.Layer.extend({
     this._update(this._geoJSON);
 
     if (this.options.showGeoJSON === false) {
-      // this._geoJSONRenderer._ctx.canvas.style.display = 'none';
+      this._geoJSONRenderer._ctx.canvas.style.display = 'none';
     }
 
-    this._geoJSONRenderer._ctx.mozImageSmoothingEnabled = false;
-    this._geoJSONRenderer._ctx.webkitImageSmoothingEnabled = false;
-    this._geoJSONRenderer._ctx.msImageSmoothingEnabled = false;
-    this._geoJSONRenderer._ctx.imageSmoothingEnabled = false;
+
+    var finalCanvas = L.DomUtil.create('canvas');
+    finalCanvas.setAttribute('width', 500);
+    finalCanvas.setAttribute('height', 500);
+    this._finalCtx = finalCanvas.getContext('2d');
+    this._finalCtx.mozImageSmoothingEnabled = false;
+    this._finalCtx.webkitImageSmoothingEnabled = false;
+    this._finalCtx.msImageSmoothingEnabled = false;
+    this._finalCtx.imageSmoothingEnabled = false;
 
     this._layer = new EmojiLayer({size: this.options.size});
     this._layer.addTo(this._map);
@@ -136,13 +141,12 @@ L.Emoji = L.Layer.extend({
     var finalWidth = viewportWidth / RESOLUTION;
     var finalHeight = viewportHeight / RESOLUTION;
 
-    var targetCtx = this._layer._canvas.getContext('2d');
-    targetCtx.fillStyle = 'black';
-    targetCtx.fillRect(0, 0, finalWidth, finalHeight);
-    targetCtx.drawImage(ctx.canvas, 0, 0, viewportWidth, viewportHeight,
+    this._finalCtx.fillStyle = 'black';
+    this._finalCtx.fillRect(0, 0, finalWidth, finalHeight);
+    this._finalCtx.drawImage(ctx.canvas, 0, 0, viewportWidth, viewportHeight,
                                     0, 0, finalWidth, finalHeight);
 
-    var imageData = targetCtx.getImageData(0, 0, finalWidth, finalHeight);
+    var imageData = this._finalCtx.getImageData(0, 0, finalWidth, finalHeight);
 
     function componentToHex(c) {
       var hex = c.toString(16);
@@ -314,12 +318,12 @@ var EmojiLayer = L.Layer.extend({
   onAdd: function(map) {
     this._map = map;
     var classes = 'leaflet-emoji leaflet-zoom-hide';
-    this._canvas = L.DomUtil.create('canvas');
-    this._canvas.setAttribute('width', 500);
-    this._canvas.setAttribute('height', 500);
-    this._canvas.style.position = 'absolute';
-    this._canvas.style.top = 0;
-    this._canvas.style.left = 0;
+    // this._canvas = L.DomUtil.create('canvas');
+    // this._canvas.setAttribute('width', 500);
+    // this._canvas.setAttribute('height', 500);
+    // this._canvas.style.position = 'absolute';
+    // this._canvas.style.top = 0;
+    // this._canvas.style.left = 0;
     this._el = L.DomUtil.create('textarea', classes);
     this._el.style.position = 'absolute';
     this._el.style.margin = 0;
@@ -333,7 +337,7 @@ var EmojiLayer = L.Layer.extend({
     this._el.setAttribute('wrap', 'off');
 
     this._map.getPanes().overlayPane.appendChild(this._el);
-    document.body.appendChild(this._canvas);
+    // document.body.appendChild(this._canvas);
 
     // TODO also fire on animation?
     this._map.on('moveend', this._onMove, this);

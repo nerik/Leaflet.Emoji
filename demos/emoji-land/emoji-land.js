@@ -132,7 +132,7 @@ var labels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}
   attribution: '©CartoDB',
   pane: 'labels'
 });
-map.setView([51.5563,0.6707], 13);
+map.setView([51.5106,-0.0675], 13);
 map.addLayer(labels);
 
 var url = 'https://free-0.tilehosting.com/data/v3/{z}/{x}/{y}.pbf.pict?key=iRnITVgsmrfcoqyulHKd';
