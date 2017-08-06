@@ -18,7 +18,7 @@ L.Emoji = L.Layer.extend({
     size: 18,
     emoji: '❓',
     emptyEmoji: EMPTY,
-    tolerance: 1
+    tolerance: .5
   },
 
   initialize: function(geoJSON, options) {
@@ -32,7 +32,7 @@ L.Emoji = L.Layer.extend({
     var samplesPerCellLine = this.options.size / RESOLUTION;
     var samplesPerCell = samplesPerCellLine * this.options.size;
     this._maxEmptySamplesPerCell = samplesPerCell * this.options.tolerance;
-    console.log('at most', this._maxEmptySamplesPerCell, 'empty samples should be there')
+    // console.log('at most', this._maxEmptySamplesPerCell, 'empty samples should be there')
 
     this._geoJSON = geoJSON;
   },
@@ -54,13 +54,8 @@ L.Emoji = L.Layer.extend({
     this._update(this._geoJSON);
 
     if (this.options.showGeoJSON === false) {
-      // this._geoJSONRenderer._ctx.canvas.style.display = 'none';
+      this._geoJSONRenderer._ctx.canvas.style.display = 'none';
     }
-
-    this._geoJSONRenderer._ctx.mozImageSmoothingEnabled = false;
-    this._geoJSONRenderer._ctx.webkitImageSmoothingEnabled = false;
-    this._geoJSONRenderer._ctx.msImageSmoothingEnabled = false;
-    this._geoJSONRenderer._ctx.imageSmoothingEnabled = false;
 
     this._layer = new EmojiLayer({size: this.options.size});
     this._layer.addTo(this._map);
@@ -115,34 +110,28 @@ L.Emoji = L.Layer.extend({
   _setGrid: function() {
     var size = this.options.size;
 
-    var ctx = this._geoJSONRenderer._ctx;
-    var viewportWidth = ctx.canvas.width;
-    var viewportHeight = ctx.canvas.height;
+    var computedStyle = window.getComputedStyle(this._map._container);
+    var viewportWidth = parseFloat(computedStyle.width);
+    var viewportHeight = parseFloat(computedStyle.height);
 
+    console.log('size', size)
+    console.log(viewportWidth, viewportHeight)
     // add the extra emoji to match the exact grid size
     viewportWidth += size - (viewportWidth % size);
     viewportHeight += size - (viewportHeight % size);
-    console.log('size', size)
-    console.log(viewportWidth, viewportHeight)
 
+    var ctx = this._geoJSONRenderer._ctx;
 
     if (ctx === undefined) {
       console.warn('canvas renderer not initialized yet');
       return;
     }
 
+    var imageData = ctx.getImageData(0, 0, viewportWidth, viewportHeight);
+
+    // this._layer._canvas.getContext('2d').putImageData(imageData, 0, 0)
+
     var t = performance.now();
-
-    var finalWidth = viewportWidth / RESOLUTION;
-    var finalHeight = viewportHeight / RESOLUTION;
-
-    var targetCtx = this._layer._canvas.getContext('2d');
-    targetCtx.fillStyle = 'black';
-    targetCtx.fillRect(0, 0, finalWidth, finalHeight);
-    targetCtx.drawImage(ctx.canvas, 0, 0, viewportWidth, viewportHeight,
-                                    0, 0, finalWidth, finalHeight);
-
-    var imageData = targetCtx.getImageData(0, 0, finalWidth, finalHeight);
 
     function componentToHex(c) {
       var hex = c.toString(16);
@@ -153,32 +142,25 @@ L.Emoji = L.Layer.extend({
       return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
     }
 
-
     var emojiLines = [];
     var emojiLineColors = [];
-    var cellWidth = size / RESOLUTION;
     var numPixels = imageData.data.length / 4;
-    var numPixelsEmojiLine = finalWidth * cellWidth;
+    var numPixelsEmojiLine = viewportWidth * size;
 
-    for (var i = 0; i < numPixels; i++) {
+    for (var i = 0; i < numPixels; i += RESOLUTION) {
+      var linePxIndex = i % viewportWidth;
+      var lineCellIndex = Math.floor(linePxIndex / size);
+
+      if (!emojiLineColors[lineCellIndex]) {
+        emojiLineColors[lineCellIndex] = {};
+      }
+
       var arrOffset = i * 4;
       var r = imageData.data[arrOffset];
       var g = imageData.data[arrOffset + 1];
       var b = imageData.data[arrOffset + 2];
       var rgb = rgbToHex(r, g, b);
 
-      // get index of the pixel on the pixel line
-      var linePxIndex = i % finalWidth;
-
-      //get the cell index
-      var lineCellIndex = Math.floor(linePxIndex / cellWidth);
-
-      //if emoji cell (used to count how much time a color appears in a cell) doesn't exist yet, create
-      if (!emojiLineColors[lineCellIndex]) {
-        emojiLineColors[lineCellIndex] = {};
-      }
-
-      // count how much time a color appears in a cell
       if (emojiLineColors[lineCellIndex][rgb]) {
         emojiLineColors[lineCellIndex][rgb]++;
       } else {
@@ -315,8 +297,8 @@ var EmojiLayer = L.Layer.extend({
     this._map = map;
     var classes = 'leaflet-emoji leaflet-zoom-hide';
     this._canvas = L.DomUtil.create('canvas');
-    this._canvas.setAttribute('width', 500);
-    this._canvas.setAttribute('height', 500);
+    this._canvas.setAttribute('width', 1200);
+    this._canvas.setAttribute('height', 1200);
     this._canvas.style.position = 'absolute';
     this._canvas.style.top = 0;
     this._canvas.style.left = 0;
@@ -333,7 +315,7 @@ var EmojiLayer = L.Layer.extend({
     this._el.setAttribute('wrap', 'off');
 
     this._map.getPanes().overlayPane.appendChild(this._el);
-    document.body.appendChild(this._canvas);
+    // document.body.appendChild(this._canvas);
 
     // TODO also fire on animation?
     this._map.on('moveend', this._onMove, this);
