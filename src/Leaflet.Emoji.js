@@ -16,13 +16,21 @@ L.Emoji = L.Layer.extend({
     showGeoJSON: true,
     size: 18,
     emoji: '❓',
-    emptyEmoji: EMPTY
+    emptyEmoji: EMPTY,
+    tolerance: .5
   },
 
   initialize: function(geoJSON, options) {
     this._getEmoji = this._getEmojiMethod(options);
     var preparedOptions = this._matchShortcodes(options);
     L.Util.setOptions(this, preparedOptions);
+
+    // should be an exact divisor of size
+    this._pxIncrement = 6;
+    var samplesPerCellLine = this.options.size / this._pxIncrement;
+    var samplesPerCell = samplesPerCellLine * this.options.size;
+    this._maxEmptySamplesPerCell = samplesPerCell * this.options.tolerance;
+    // console.log('at most', this._maxEmptySamplesPerCell, 'empty samples should be there')
 
     this._geoJSON = geoJSON;
   },
@@ -42,50 +50,22 @@ L.Emoji = L.Layer.extend({
     });
 
     this._featuresByColor = {};
-    var that = this;
-    var n = 0;
-    var c = 0;
-    var t = performance.now();
-
-    var colorByEmojis = {};
-    this._emojisByColor = [];
 
     this._geoJSONLayer = L.geoJSON(this._geoJSON, {
       renderer: this._geoJSONRenderer,
       style: function (feature) {
-
-        var emoji = that._getEmoji(feature, that.options);
-        if (!colorByEmojis[emoji]) {
-          colorByEmojis[emoji] = c;
-          that._emojisByColor[c] = emoji;
-
-          // if pixel values are too close, gives a lot of errors
-          c += 10;
-        }
-
-        var hex = colorByEmojis[emoji].toString(16);
-        hex = hex.length == 1 ? '0' + hex : hex;
-        var color = '#' + hex + '0000';
-        n++;
-
-        // feature.properties.r = Math.floor(255 * Math.random());
-        // feature.properties.g = Math.floor(255 * Math.random());
-        // feature.properties.b = Math.floor(255 * Math.random());
-
-        // var color = '#' + Math.floor(COLORS * Math.random()).toString(16);
-        // that._featuresByColor[color] = feature;
+        var color = '#' + Math.floor(COLORS * Math.random()).toString(16);
+        this._featuresByColor[color] = feature;
         return {
           fillColor: color,
           fillOpacity: 1,
           stroke: false
         };
-      }
+      }.bind(this)
     });
-    console.log(performance.now()- t);
-    console.log(colorByEmojis);
 
-    console.log(n)
     this._geoJSONLayer.addTo(this._map);
+    this._geoJSONRenderer._ctx.canvas.style.display = 'none';
 
     if (this.options.showGeoJSON) {
       // TODO make visible or not
@@ -123,9 +103,6 @@ L.Emoji = L.Layer.extend({
 
     this._layer._canvas.getContext('2d').putImageData(imageData, 0, 0)
 
-    // console.log(imageData)
-    // console.log(viewportWidth, viewportHeight)
-
     var t = performance.now();
 
     function componentToHex(c) {
@@ -142,131 +119,53 @@ L.Emoji = L.Layer.extend({
     var numPixels = imageData.data.length / 4;
     var numPixelsEmojiLine = viewportWidth * size;
 
-    // should be an exact divisor of size
-    var pxIncrement = 6;
-
-
-    for (var i = 0; i < numPixels; i += pxIncrement) {
+    for (var i = 0; i < numPixels; i += this._pxIncrement) {
       var linePxIndex = i % viewportWidth;
       var lineCellIndex = Math.floor(linePxIndex / size);
-      // if (i < 20000) {
-      //
-      //   // console.log(lineCellIndex)
-      // }
 
       if (!emojiLineColors[lineCellIndex]) {
-        emojiLineColors[lineCellIndex] = [];
+        emojiLineColors[lineCellIndex] = {};
       }
 
       var arrOffset = i * 4;
-      if (imageData.data[arrOffset + 3] > 0) {
-        var r = imageData.data[arrOffset];
-        // var g = imageData.data[arrOffset + 1];
-        // var b = imageData.data[arrOffset + 2];
-        // var rgb = rgbToHex(r, g, b);
+      var r = imageData.data[arrOffset];
+      var g = imageData.data[arrOffset + 1];
+      var b = imageData.data[arrOffset + 2];
+      var rgb = rgbToHex(r, g, b);
 
-        if (emojiLineColors[lineCellIndex][r]) {
-          emojiLineColors[lineCellIndex][r]++;
-        } else {
-          emojiLineColors[lineCellIndex][r] = 1;
-        }
+      if (emojiLineColors[lineCellIndex][rgb]) {
+        emojiLineColors[lineCellIndex][rgb]++;
+      } else {
+        emojiLineColors[lineCellIndex][rgb] = 1;
       }
 
       if (i> 0 && i % numPixelsEmojiLine === 0) {
-        // console.log('new emoji Line',  i);
-        // console.log(emojiLineColors);
         var emojiLine = [];
         emojiLineColors.forEach(function (cellColors) {
           var max = 0;
+          var numEmpty = 0;
           var finalColor;
           Object.keys(cellColors).forEach(function(color) {
-            var num = cellColors[parseInt(color)];
+            var num = cellColors[color];
+            if (color === '#000000') {
+              numEmpty = num;
+            }
             if (num > max) {
-              finalColor = parseInt(color);
+              finalColor = color;
               max = num;
             }
           });
-          // console.log(cellColors, finalColor);
-          if (finalColor !== undefined && !this._emojisByColor[finalColor]) {
-            console.log('!!!!', finalColor)
-          }
-          var emoji = (finalColor) ? this._emojisByColor[finalColor] : EMPTY;
-          // var emoji = this._getEmoji(this._featuresByColor[finalColor], this.options);
+          var feature = (numEmpty < this._maxEmptySamplesPerCell) ? this._featuresByColor[finalColor] : undefined;
+          var emoji = this._getEmoji(feature, this.options);
           emojiLine.push(emoji);
         }.bind(this));
         emojiLines.push(emojiLine);
         emojiLineColors = [];
       }
     }
-    //
-    //
-    //
-    // function getCellColor(imageData, initOffset, cellSize, totalWidth) {
-    //   var offsetPx = initOffset;
-    //   var totalPx = cellSize * cellSize;
-    //   var cellColors = {};
-    //   for (var px = 0; px < totalPx - 20; px++) {
-    //     var arrOffset = offsetPx * 4;
-    //
-    //     var r = imageData.data[arrOffset];
-    //     var g = imageData.data[arrOffset + 1];
-    //     var b = imageData.data[arrOffset + 2];
-    //     var rgb = rgbToHex(r, g, b);
-    //
-    //     if (cellColors[rgb]) {
-    //       cellColors[rgb]++;
-    //     } else {
-    //       cellColors[rgb] = 1;
-    //     }
-    //
-    //     if (y % cellSize === 0) {
-    //       offsetPx += totalWidth - cellSize;
-    //     } else {
-    //       offsetPx++;
-    //     }
-    //   }
-    //
-    //   var max = 0;
-    //   var finalColor;
-    //   Object.keys(cellColors).forEach(function(color) {
-    //     var num = cellColors[color];
-    //     if (num > max) {
-    //       finalColor = color;
-    //       max = num;
-    //     }
-    //   });
-    //   console.log(cellColors, finalColor);
-    //
-    //   return finalColor;
-    // }
-    //
-    // for (var y = 0; y < viewportHeight - 100; y += size) {
-    //   var line = [];
-    //   var rowOffset = viewportWidth * y;
-    //   for (var x = 0; x < viewportWidth - 100; x += size) {
-    //     var pixelOffset = rowOffset + x;
-    //     var rgb = getCellColor(imageData, pixelOffset, size, viewportWidth);
-    //
-    //     // var r = imageData.data[arrOffset];
-    //     // var g = imageData.data[arrOffset + 1];
-    //     // var b = imageData.data[arrOffset + 2];
-    //     // var feature = null;
-    //     // var emoji = null;
-    //     // if (r !== 0 && g !== 0 && b !== 0) {
-    //     //   var rgb = rgbToHex(r, g, b);
-    //     //   // console.log(r, g, b)
-    //     //   // console.log(pixelOffset)
-    //     //   feature = this._featuresByColor[rgb];
-    //     // }
-    //     var emoji = this._getEmoji(this._featuresByColor[rgb], this.options);
-    //     line.push(emoji);
-    //   }
-    //   values.push(line);
-    // }
 
     console.log(performance.now()- t);
     this._layer.setGrid(emojiLines, viewportWidth, viewportHeight);
-    // console.log(emojiLines)
 
   },
 
@@ -375,7 +274,6 @@ var EmojiLayer = L.Layer.extend({
     this._canvas.style.position = 'absolute';
     this._canvas.style.top = 0;
     this._canvas.style.left = 0;
-    console.log(this._canvas)
     this._el = L.DomUtil.create('textarea', classes);
     this._el.style.position = 'absolute';
     this._el.style.margin = 0;
@@ -389,7 +287,7 @@ var EmojiLayer = L.Layer.extend({
     this._el.setAttribute('wrap', 'off');
 
     this._map.getPanes().overlayPane.appendChild(this._el);
-    document.body.appendChild(this._canvas);
+    // document.body.appendChild(this._canvas);
 
     // TODO also fire on animation?
     this._map.on('moveend', this._onMove, this);

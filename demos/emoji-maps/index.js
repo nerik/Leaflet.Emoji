@@ -246,7 +246,6 @@
     });
 
     function loadMap(mapId) {
-      console.log('plip')
       if (emoji) {
         emoji.remove();
         emoji = null;
