@@ -13,7 +13,7 @@ var getShortcode = function(emoji) {
 
 L.Emoji = L.Layer.extend({
   options: {
-    showGeoJSON: true,
+    showGeoJSON: false,
     size: 18,
     emoji: '❓',
     emptyEmoji: EMPTY,
@@ -49,7 +49,32 @@ L.Emoji = L.Layer.extend({
       padding: 0
     });
 
+    this._update(this._geoJSON);
+
+    if (this.options.showGeoJSON === false) {
+      this._geoJSONRenderer._ctx.canvas.style.display = 'none';
+    }
+
+    this._layer = new EmojiLayer({size: this.options.size});
+    this._layer.addTo(this._map);
+
+    this._setGridAtCallStackCleared();
+
+    this._map.on('moveend', this._setGrid, this);
+  },
+
+  update: function(geoJSON) {
+    this._update(geoJSON);
+    this._setGridAtCallStackCleared();
+  },
+
+  _update: function(geoJSON) {
+    this._geoJSON = geoJSON;
     this._featuresByColor = {};
+
+    if (this._geoJSONLayer) {
+      this._geoJSONLayer.remove();
+    }
 
     this._geoJSONLayer = L.geoJSON(this._geoJSON, {
       renderer: this._geoJSONRenderer,
@@ -65,17 +90,6 @@ L.Emoji = L.Layer.extend({
     });
 
     this._geoJSONLayer.addTo(this._map);
-    this._geoJSONRenderer._ctx.canvas.style.display = 'none';
-
-    if (this.options.showGeoJSON) {
-      // TODO make visible or not
-    }
-
-    this._layer = new EmojiLayer({size: this.options.size});
-    this._layer.addTo(this._map);
-
-    this._setGrid();
-    this._map.on('moveend', this._setGrid, this);
   },
 
   getGrid: function() {
@@ -84,6 +98,11 @@ L.Emoji = L.Layer.extend({
 
   copyGrid: function() {
     this._layer.copyGrid();
+  },
+
+  //wait for Canvas layer to render
+  _setGridAtCallStackCleared: function() {
+    setTimeout(this._setGrid.bind(this), 0);
   },
 
   _setGrid: function() {
@@ -99,9 +118,16 @@ L.Emoji = L.Layer.extend({
     viewportWidth += size - (viewportWidth % size);
     viewportHeight += size - (viewportHeight % size);
 
-    var imageData = this._geoJSONRenderer._ctx.getImageData(0, 0, viewportWidth, viewportHeight);
+    var ctx = this._geoJSONRenderer._ctx;
 
-    this._layer._canvas.getContext('2d').putImageData(imageData, 0, 0)
+    if (ctx === undefined) {
+      console.warn('canvas renderer not initialized yet');
+      return;
+    }
+
+    var imageData = ctx.getImageData(0, 0, viewportWidth, viewportHeight);
+
+    // this._layer._canvas.getContext('2d').putImageData(imageData, 0, 0)
 
     var t = performance.now();
 

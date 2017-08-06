@@ -1,6 +1,5 @@
 import Pbf from 'pbf';
 import { VectorTile } from 'vector-tile';
-import debounce from 'lodash/debounce';
 import uniq from 'lodash/uniq';
 import emojiLegend from './emoji-land-legend';
 
@@ -14,7 +13,7 @@ L.VectorGrid = L.GridLayer.extend({
     // 🍂option subdomains: String = 'abc'
     // Akin to the `subdomains` option for `L.TileLayer`.
     subdomains: 'abc',
-    updateWhenIdle: true
+    updateWhenIdle: false
   },
   initialize: function(url, options) {
     this.__url = url;
@@ -48,8 +47,8 @@ L.VectorGrid = L.GridLayer.extend({
     var key = this._tileCoordsToKey(coords);
 
     var tile = document.createElement('div');
-    tile.innerHTML = [coords.x, coords.y, coords.z].join(', ');
-    tile.style.outline = '1px solid red';
+    // tile.innerHTML = [coords.x, coords.y, coords.z].join(', ');
+    // tile.style.outline = '1px solid red';
 
     var tileUrl = L.Util.template(this.__url, L.extend(data, this.options));
     var vectorTilePromise = fetch(tileUrl).then(function(response) {
@@ -94,9 +93,6 @@ L.VectorGrid = L.GridLayer.extend({
   }
 });
 
-
-var emoji;
-
 var allLandcoverClasses = {};
 Object.keys(emojiLegend).forEach(function(emoji) {
   var landcoverClasses = emojiLegend[emoji];
@@ -109,8 +105,8 @@ console.log(allLandcoverClasses)
 
 var CONFIG = {
   source: '© OpenStreetMap contributors, European Union - SOeS, CORINE Land Cover, 2006.',
-  size: 20,
-  showGeoJSON: true,
+  size: 18,
+  showGeoJSON: false,
   emoji: {
     property: 'class',
     values: allLandcoverClasses,
@@ -120,15 +116,15 @@ var CONFIG = {
 
 
 var map = L.map('map', {
-  minZoom: 14
+  minZoom: 10
 });
 
 map.zoomControl.setPosition('bottomleft');
 
 new L.Hash(map);
 
-// var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '' });
-// map.addLayer(basemap);
+var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '' });
+map.addLayer(basemap);
 map.createPane('labels');
 map.getPane('labels').style.zIndex = 650;
 map.getPane('labels').style.pointerEvents = 'none';
@@ -136,7 +132,7 @@ var labels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}
   attribution: '©CartoDB',
   pane: 'labels'
 });
-// map.setView([46.1651,-1.3481], 14);
+map.setView([51.5563,0.6707], 13);
 map.addLayer(labels);
 
 var url = 'https://free-0.tilehosting.com/data/v3/{z}/{x}/{y}.pbf.pict?key=iRnITVgsmrfcoqyulHKd';
@@ -155,7 +151,7 @@ geocoder.addTo(map);
 
 
 var legend = document.querySelector('.js-legend');
-
+var emoji;
 
 function getAllLandcoverClasses() {
   return uniq(geoJSON.features.map(function(feature) {
@@ -164,13 +160,13 @@ function getAllLandcoverClasses() {
 }
 
 function update() {
-  if (emoji) {
-    emoji.remove();
-    emoji = null;
-  }
-
   var n = performance.now()
-  emoji = L.emoji(geoJSON, CONFIG).addTo(map);
+  if (emoji === undefined) {
+    console.log(geoJSON)
+    emoji = L.emoji(geoJSON, CONFIG).addTo(map);
+  } else {
+    emoji.update(geoJSON);
+  }
   console.log(performance.now() - n);
 
   const landcoverClasses = getAllLandcoverClasses();
@@ -181,19 +177,9 @@ function update() {
   console.log(landcoverClasses);
 }
 
-var debouncedUpdate = debounce(update, 800);
-
-
-vectorGrid.on('tileloadstart', function() {
-  // console.log('tileloadstart', arguments)
-});
-vectorGrid.on('tileload', function() {
-  debouncedUpdate();
-});
-
-vectorGrid.on('tileunload', function() {
-  // console.log('tileunload', tile, tile.uid,tile.geoJSON, JSON.stringify(tile.geoJSON));
-  debouncedUpdate();
+vectorGrid.on('load', function() {
+  console.log('load - all tiles loaded')
+  update();
 });
 
 

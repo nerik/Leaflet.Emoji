@@ -13,7 +13,7 @@
     "livereload": "live-reload --port 9091 .",
     "open": "opener http://localhost:9094",
     "serve": "http-server -s -p 9094 .",
-    "dev": "npm run build -s && (sleep 1 && npm run open -s) & npm run livereload -s & npm run serve",
+    "dev": "npm run build-demo-emoji-land -s && (sleep 1 && npm run open -s) & npm run livereload -s & npm run serve",
     "lint": "eslint -c .eslintrc.js src demos/emoji-land/emoji-land.js"
   },
   "repository": {
