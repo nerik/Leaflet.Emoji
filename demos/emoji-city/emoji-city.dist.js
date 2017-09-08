@@ -1143,10 +1143,12 @@ var VectorTile = vectortile;
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
+/** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
 
 var _freeGlobal = freeGlobal;
 
+/** Detect free variable `self`. */
 var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
 
 /** Used as a reference to the global object. */
@@ -1154,10 +1156,12 @@ var root = _freeGlobal || freeSelf || Function('return this')();
 
 var _root = root;
 
+/** Built-in value references. */
 var Symbol = _root.Symbol;
 
 var _Symbol = Symbol;
 
+/** Used for built-in method references. */
 var objectProto$1 = Object.prototype;
 
 /** Used to check objects for own properties. */
@@ -1225,6 +1229,7 @@ function objectToString(value) {
 
 var _objectToString = objectToString;
 
+/** `Object#toString` result references. */
 var nullTag = '[object Null]';
 var undefinedTag = '[object Undefined]';
 
@@ -1281,6 +1286,7 @@ function isObject(value) {
 
 var isObject_1 = isObject;
 
+/** `Object#toString` result references. */
 var asyncTag = '[object AsyncFunction]';
 var funcTag = '[object Function]';
 var genTag = '[object GeneratorFunction]';
@@ -1315,10 +1321,12 @@ function isFunction(value) {
 
 var isFunction_1 = isFunction;
 
+/** Used to detect overreaching core-js shims. */
 var coreJsData = _root['__core-js_shared__'];
 
 var _coreJsData = coreJsData;
 
+/** Used to detect methods masquerading as native. */
 var maskSrcKey = (function() {
   var uid = /[^.]+$/.exec(_coreJsData && _coreJsData.keys && _coreJsData.keys.IE_PROTO || '');
   return uid ? ('Symbol(src)_1.' + uid) : '';
@@ -1364,6 +1372,10 @@ function toSource(func) {
 
 var _toSource = toSource;
 
+/**
+ * Used to match `RegExp`
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+ */
 var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
 
 /** Used to detect host constructors (Safari). */
@@ -1417,6 +1429,14 @@ function getValue(object, key) {
 
 var _getValue = getValue;
 
+/**
+ * Gets the native function at `key` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {string} key The key of the method to get.
+ * @returns {*} Returns the function if it's native, else `undefined`.
+ */
 function getNative(object, key) {
   var value = _getValue(object, key);
   return _baseIsNative(value) ? value : undefined;
@@ -1424,10 +1444,18 @@ function getNative(object, key) {
 
 var _getNative = getNative;
 
+/* Built-in method references that are verified to be native. */
 var nativeCreate = _getNative(Object, 'create');
 
 var _nativeCreate = nativeCreate;
 
+/**
+ * Removes all key-value entries from the hash.
+ *
+ * @private
+ * @name clear
+ * @memberOf Hash
+ */
 function hashClear() {
   this.__data__ = _nativeCreate ? _nativeCreate(null) : {};
   this.size = 0;
@@ -1453,6 +1481,7 @@ function hashDelete(key) {
 
 var _hashDelete = hashDelete;
 
+/** Used to stand-in for `undefined` hash values. */
 var HASH_UNDEFINED = '__lodash_hash_undefined__';
 
 /** Used for built-in method references. */
@@ -1481,6 +1510,7 @@ function hashGet(key) {
 
 var _hashGet = hashGet;
 
+/** Used for built-in method references. */
 var objectProto$4 = Object.prototype;
 
 /** Used to check objects for own properties. */
@@ -1502,6 +1532,7 @@ function hashHas(key) {
 
 var _hashHas = hashHas;
 
+/** Used to stand-in for `undefined` hash values. */
 var HASH_UNDEFINED$1 = '__lodash_hash_undefined__';
 
 /**
@@ -1523,6 +1554,13 @@ function hashSet(key, value) {
 
 var _hashSet = hashSet;
 
+/**
+ * Creates a hash object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
 function Hash(entries) {
   var index = -1,
       length = entries == null ? 0 : entries.length;
@@ -1595,6 +1633,14 @@ function eq(value, other) {
 
 var eq_1 = eq;
 
+/**
+ * Gets the index at which the `key` is found in `array` of key-value pairs.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {*} key The key to search for.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
 function assocIndexOf(array, key) {
   var length = array.length;
   while (length--) {
@@ -1607,6 +1653,7 @@ function assocIndexOf(array, key) {
 
 var _assocIndexOf = assocIndexOf;
 
+/** Used for built-in method references. */
 var arrayProto = Array.prototype;
 
 /** Built-in value references. */
@@ -1640,6 +1687,15 @@ function listCacheDelete(key) {
 
 var _listCacheDelete = listCacheDelete;
 
+/**
+ * Gets the list cache value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf ListCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
 function listCacheGet(key) {
   var data = this.__data__,
       index = _assocIndexOf(data, key);
@@ -1649,12 +1705,31 @@ function listCacheGet(key) {
 
 var _listCacheGet = listCacheGet;
 
+/**
+ * Checks if a list cache value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf ListCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
 function listCacheHas(key) {
   return _assocIndexOf(this.__data__, key) > -1;
 }
 
 var _listCacheHas = listCacheHas;
 
+/**
+ * Sets the list cache `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf ListCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the list cache instance.
+ */
 function listCacheSet(key, value) {
   var data = this.__data__,
       index = _assocIndexOf(data, key);
@@ -1670,6 +1745,13 @@ function listCacheSet(key, value) {
 
 var _listCacheSet = listCacheSet;
 
+/**
+ * Creates an list cache object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
 function ListCache(entries) {
   var index = -1,
       length = entries == null ? 0 : entries.length;
@@ -1690,10 +1772,18 @@ ListCache.prototype.set = _listCacheSet;
 
 var _ListCache = ListCache;
 
+/* Built-in method references that are verified to be native. */
 var Map = _getNative(_root, 'Map');
 
 var _Map = Map;
 
+/**
+ * Removes all key-value entries from the map.
+ *
+ * @private
+ * @name clear
+ * @memberOf MapCache
+ */
 function mapCacheClear() {
   this.size = 0;
   this.__data__ = {
@@ -1721,6 +1811,14 @@ function isKeyable(value) {
 
 var _isKeyable = isKeyable;
 
+/**
+ * Gets the data for `map`.
+ *
+ * @private
+ * @param {Object} map The map to query.
+ * @param {string} key The reference key.
+ * @returns {*} Returns the map data.
+ */
 function getMapData(map, key) {
   var data = map.__data__;
   return _isKeyable(key)
@@ -1730,6 +1828,15 @@ function getMapData(map, key) {
 
 var _getMapData = getMapData;
 
+/**
+ * Removes `key` and its value from the map.
+ *
+ * @private
+ * @name delete
+ * @memberOf MapCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
 function mapCacheDelete(key) {
   var result = _getMapData(this, key)['delete'](key);
   this.size -= result ? 1 : 0;
@@ -1738,18 +1845,46 @@ function mapCacheDelete(key) {
 
 var _mapCacheDelete = mapCacheDelete;
 
+/**
+ * Gets the map value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf MapCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
 function mapCacheGet(key) {
   return _getMapData(this, key).get(key);
 }
 
 var _mapCacheGet = mapCacheGet;
 
+/**
+ * Checks if a map value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf MapCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
 function mapCacheHas(key) {
   return _getMapData(this, key).has(key);
 }
 
 var _mapCacheHas = mapCacheHas;
 
+/**
+ * Sets the map `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf MapCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the map cache instance.
+ */
 function mapCacheSet(key, value) {
   var data = _getMapData(this, key),
       size = data.size;
@@ -1761,6 +1896,13 @@ function mapCacheSet(key, value) {
 
 var _mapCacheSet = mapCacheSet;
 
+/**
+ * Creates a map cache object to store key-value pairs.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
 function MapCache(entries) {
   var index = -1,
       length = entries == null ? 0 : entries.length;
@@ -1816,6 +1958,14 @@ function setCacheHas(value) {
 
 var _setCacheHas = setCacheHas;
 
+/**
+ *
+ * Creates an array cache object to store unique values.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [values] The values to cache.
+ */
 function SetCache(values) {
   var index = -1,
       length = values == null ? 0 : values.length;
@@ -1894,6 +2044,15 @@ function strictIndexOf(array, value, fromIndex) {
 
 var _strictIndexOf = strictIndexOf;
 
+/**
+ * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {*} value The value to search for.
+ * @param {number} fromIndex The index to search from.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
 function baseIndexOf(array, value, fromIndex) {
   return value === value
     ? _strictIndexOf(array, value, fromIndex)
@@ -1902,6 +2061,15 @@ function baseIndexOf(array, value, fromIndex) {
 
 var _baseIndexOf = baseIndexOf;
 
+/**
+ * A specialized version of `_.includes` for arrays without support for
+ * specifying an index to search from.
+ *
+ * @private
+ * @param {Array} [array] The array to inspect.
+ * @param {*} target The value to search for.
+ * @returns {boolean} Returns `true` if `target` is found, else `false`.
+ */
 function arrayIncludes(array, value) {
   var length = array == null ? 0 : array.length;
   return !!length && _baseIndexOf(array, value, 0) > -1;
@@ -1946,6 +2114,7 @@ function cacheHas(cache, key) {
 
 var _cacheHas = cacheHas;
 
+/* Built-in method references that are verified to be native. */
 var Set = _getNative(_root, 'Set');
 
 var _Set = Set;
@@ -1987,6 +2156,7 @@ function setToArray(set) {
 
 var _setToArray = setToArray;
 
+/** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0;
 
 /**
@@ -2002,6 +2172,7 @@ var createSet = !(_Set && (1 / _setToArray(new _Set([,-0]))[1]) == INFINITY) ? n
 
 var _createSet = createSet;
 
+/** Used as the size to enable large array optimizations. */
 var LARGE_ARRAY_SIZE = 200;
 
 /**
@@ -2067,6 +2238,24 @@ function baseUniq(array, iteratee, comparator) {
 
 var _baseUniq = baseUniq;
 
+/**
+ * Creates a duplicate-free version of an array, using
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * for equality comparisons, in which only the first occurrence of each element
+ * is kept. The order of result values is determined by the order they occur
+ * in the array.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Array
+ * @param {Array} array The array to inspect.
+ * @returns {Array} Returns the new duplicate free array.
+ * @example
+ *
+ * _.uniq([2, 1, 2]);
+ * // => [2, 1]
+ */
 function uniq(array) {
   return (array && array.length) ? _baseUniq(array) : [];
 }
@@ -2232,7 +2421,7 @@ var labels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}
   attribution: '©CartoDB',
   pane: 'labels'
 });
-map.setView([51.5563,0.6707], 13);
+map.setView([51.5106,-0.0675], 13);
 map.addLayer(labels);
 
 var url = 'https://free-0.tilehosting.com/data/v3/{z}/{x}/{y}.pbf.pict?key=iRnITVgsmrfcoqyulHKd';

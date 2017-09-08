@@ -1,7 +1,7 @@
 import Pbf from 'pbf';
 import { VectorTile } from 'vector-tile';
 import uniq from 'lodash/uniq';
-import emojiLegend from './emoji-land-legend';
+import emojiLegend from './emoji-city-legend';
 
 var geoJSON = {
   type: 'FeatureCollection',
