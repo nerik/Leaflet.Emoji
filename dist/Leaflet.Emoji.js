@@ -2373,7 +2373,7 @@ var shortcodes = { ':interrobang:': [ 8265 ],
   ':white_large_square:': [ 11036 ],
   ':star:': [ 11088 ],
   ':o:': [ 11093 ],
-  ':part_alternation_mark:': [ 12349 ] };
+  ':part_alternation_mark:': [ 12349 ] }
 
 var EMPTY = '　';
 var COLORS = Math.pow(2, 24);

@@ -2,9 +2,11 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 
 export default {
-  entry: 'src/Leaflet.Emoji.js',
-  format: 'iife',
-  dest: 'dist/Leaflet.Emoji.js',
+  input: 'src/Leaflet.Emoji.js',
+  output: {
+    file: 'dist/Leaflet.Emoji.js',
+    format: 'iife'
+  },
   plugins: [
     resolve({
       jsnext: true
