@@ -1,5 +1,4 @@
 var EMPTY = '▫️';
-var COLORS = Math.pow(2, 24);
 var RESOLUTION = 4;
 
 import shortcodes from './shortcodes';
@@ -91,15 +90,18 @@ L.Emoji = L.Layer.extend({
     this._geoJSONLayer = L.geoJSON(this._geoJSON, {
       renderer: this._geoJSONRenderer,
       style: function (feature) {
-        var color = '#' + Math.floor(COLORS * Math.random()).toString(16);
-        this._featuresByColor[color] = feature;
+        var rgb = [null, null, null];
+        rgb = rgb.map(function() { return Math.floor(256 * Math.random()) })
+        var colStr = rgb.join(',');
+        this._featuresByColor[colStr] = feature;
         return {
-          fillColor: color,
+          fillColor: 'rgb(' + colStr + ')',
           fillOpacity: 1,
           stroke: false
         };
       }.bind(this)
     });
+    console.log(this._featuresByColor)
 
     this._geoJSONLayer.addTo(this._map);
   },
@@ -148,16 +150,6 @@ L.Emoji = L.Layer.extend({
 
     var imageData = this._finalCtx.getImageData(0, 0, finalWidth, finalHeight);
 
-    function componentToHex(c) {
-      var hex = c.toString(16);
-      return hex.length == 1 ? '0' + hex : hex;
-    }
-
-    function rgbToHex(r, g, b) {
-      return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
-    }
-
-
     var emojiLines = [];
     var emojiLineColors = [];
     var cellWidth = size / RESOLUTION;
@@ -169,7 +161,7 @@ L.Emoji = L.Layer.extend({
       var r = imageData.data[arrOffset];
       var g = imageData.data[arrOffset + 1];
       var b = imageData.data[arrOffset + 2];
-      var rgb = rgbToHex(r, g, b);
+      var rgb = [r, g, b].join(',')
 
       // get index of the pixel on the pixel line
       var linePxIndex = i % finalWidth;
