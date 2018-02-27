@@ -365,7 +365,9 @@ var EmojiLayer = L.Layer.extend({
   },
 
   _onMove: function() {
-    this._el.style.transform = _invertTranslate3D(this._map._mapPane.style.transform);
+    var mapPaneTrans = this._map._mapPane.style.transform;
+    var mapPaneTransInvert = _invertTranslate3D(mapPaneTrans);
+    this._el.style.transform = mapPaneTransInvert;
   }
 });
 
@@ -375,7 +377,7 @@ var _invertTranslate3D = function(originalTransform) {
     var y = -parseInt(yStr);
     return 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
   };
-  return originalTransform.replace(/translate3d\((-?\d+)px, (-?\d+)px.+\)/, replacer);
+  return originalTransform.replace(/translate3d\((-?[\d\.]+)px, (-?[\d\.]+)px.+\)/, replacer);
 };
 
 
