@@ -1,4 +1,4 @@
-var EMPTY = '　';
+var EMPTY = '▫️';
 var COLORS = Math.pow(2, 24);
 var RESOLUTION = 4;
 

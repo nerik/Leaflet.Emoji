@@ -2375,7 +2375,7 @@ var shortcodes = { ':interrobang:': [ 8265 ],
   ':o:': [ 11093 ],
   ':part_alternation_mark:': [ 12349 ] }
 
-var EMPTY = '　';
+var EMPTY = '▫️';
 var COLORS = Math.pow(2, 24);
 var RESOLUTION = 4;
 
