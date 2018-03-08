@@ -1,4 +1,4 @@
-var EMPTY = '▫️';
+var EMPTY = '◻️';
 var RESOLUTION = 4;
 
 import shortcodes from './shortcodes';
@@ -13,11 +13,12 @@ var getShortcode = function(emoji) {
 
 L.Emoji = L.Layer.extend({
   options: {
-    showGeoJSON: false,
+    debug: false,
     size: 18,
     emoji: '❓',
     emptyEmoji: EMPTY,
-    tolerance: 1
+    tolerance: 1,
+    editable: false
   },
 
   initialize: function(geoJSON, options) {
@@ -31,7 +32,7 @@ L.Emoji = L.Layer.extend({
     var samplesPerCellLine = this.options.size / RESOLUTION;
     var samplesPerCell = samplesPerCellLine * this.options.size;
     this._maxEmptySamplesPerCell = samplesPerCell * this.options.tolerance;
-    console.log('at most', this._maxEmptySamplesPerCell, 'empty samples should be there')
+    // console.log('at most', this._maxEmptySamplesPerCell, 'empty samples should be there')
 
     this._geoJSON = geoJSON;
   },
@@ -52,10 +53,9 @@ L.Emoji = L.Layer.extend({
 
     this._update(this._geoJSON);
 
-    if (this.options.showGeoJSON === false) {
+    if (this.options.debug === false) {
       this._geoJSONRenderer._ctx.canvas.style.display = 'none';
     }
-
 
     var finalCanvas = L.DomUtil.create('canvas');
     finalCanvas.setAttribute('width', 500);
@@ -66,7 +66,7 @@ L.Emoji = L.Layer.extend({
     this._finalCtx.msImageSmoothingEnabled = false;
     this._finalCtx.imageSmoothingEnabled = false;
 
-    this._layer = new EmojiLayer({size: this.options.size});
+    this._layer = new EmojiLayer(this.options);
     this._layer.addTo(this._map);
 
     this._setGridAtCallStackCleared();
@@ -101,13 +101,16 @@ L.Emoji = L.Layer.extend({
         };
       }.bind(this)
     });
-    console.log(this._featuresByColor)
 
     this._geoJSONLayer.addTo(this._map);
   },
 
   getGrid: function() {
     return this._layer.getGrid();
+  },
+
+  getGridString: function() {
+    return this._layer.getGridString();
   },
 
   copyGrid: function() {
@@ -129,8 +132,8 @@ L.Emoji = L.Layer.extend({
     // add the extra emoji to match the exact grid size
     viewportWidth += size - (viewportWidth % size);
     viewportHeight += size - (viewportHeight % size);
-    console.log('size', size)
-    console.log(viewportWidth, viewportHeight)
+    // console.log('size', size)
+    // console.log(viewportWidth, viewportHeight)
 
 
     if (ctx === undefined) {
@@ -189,7 +192,7 @@ L.Emoji = L.Layer.extend({
           var finalColor;
           Object.keys(cellColors).forEach(function(color) {
             var num = cellColors[color];
-            if (color === '#000000') {
+            if (color === '0,0,0') {
               numEmpty = num;
             }
             if (num > max) {
@@ -219,7 +222,7 @@ L.Emoji = L.Layer.extend({
     } else if (options.emoji.property && (options.emoji.values || options.emoji.classes)) {
       return this._getEmojiObject;
     } else {
-      throw new Error('the fuck you\'re doing man');
+      throw new Error('options.emoji should be a function, as string or a configuration object');
     }
   },
 
@@ -255,7 +258,7 @@ L.Emoji = L.Layer.extend({
         return options.emoji.emptyValue;
       }
     }
-    return EMPTY;
+    return (this.options.editable === true) ? EMPTY : '';
   },
 
   _getClassFromValue: function(value, classes) {
@@ -316,19 +319,29 @@ var EmojiLayer = L.Layer.extend({
     // this._canvas.style.position = 'absolute';
     // this._canvas.style.top = 0;
     // this._canvas.style.left = 0;
-    this._el = L.DomUtil.create('textarea', classes);
-    this._el.style.position = 'absolute';
-    this._el.style.margin = 0;
-    this._el.style.zIndex = 0;
-    this._el.style.fontSize = this.options.size + 'px';
-    this._el.style.lineHeight = 1;
-    this._el.style.background = 'none';
-    this._el.style.border = 'none';
-    this._el.innerHTML = '';
-    //http://stackoverflow.com/questions/18259090/textarea-word-wrap-only-on-line-breaks
-    this._el.setAttribute('wrap', 'off');
+    this._textarea = L.DomUtil.create('textarea', classes);
+    this._map.getPanes().overlayPane.appendChild(this._textarea);
 
-    this._map.getPanes().overlayPane.appendChild(this._el);
+    if (this.options.editable === true) {
+      this._textarea.style.position = 'absolute';
+      this._textarea.style.margin = 0;
+      this._textarea.style.zIndex = 0;
+      this._textarea.style.background = 'none';
+      this._textarea.style.border = 'none';
+      // http://stackoverflow.com/questions/18259090/textarea-word-wrap-only-on-line-breaks
+      this._textarea.setAttribute('wrap', 'off');
+      this._el = this._textarea;
+    } else {
+      classes += ' -s' + this.options.size;
+      this._container = L.DomUtil.create('div', classes);
+      this._map.getPanes().overlayPane.appendChild(this._container);
+      this._el = this._container;
+      this._textarea.style.display = 'none';
+    }
+    this._el.style.lineHeight = 1;
+    this._el.style.fontSize = this.options.size + 'px';
+    this._el.innerHTML = '';
+
     // document.body.appendChild(this._canvas);
 
     // TODO also fire on animation?
@@ -339,21 +352,44 @@ var EmojiLayer = L.Layer.extend({
     this._el.style.width = w + 'px';
     this._el.style.height = h + 'px';
 
-    this._grid = grid.map(function(line) {
+    this._grid = grid;
+    this._gridString = this._grid.map(function(line) {
       return line.join('');
     }).join('\n');
+    this._textarea.innerHTML = this._gridString;
 
-    this._el.innerHTML = this._grid;
+    if (this.options.editable === false) {
+      this._gridHTML = grid.map(function(line) {
+        return line.map(function(e) {
+          return '<span>' + e + '</span>'
+        }).join('');
+      }).join('<br>');
+
+      this._container.innerHTML = this._gridHTML;
+    }
   },
 
   getGrid: function() {
     return this._grid;
   },
 
+  getGridString: function() {
+    return this._gridString;
+  },
+
   copyGrid: function() {
-    this._el.select();
+    this._textarea.style.display = 'block';
+
+    this._textarea.select();
     document.execCommand('copy');
-    this._el.selectionStart = this._el.selectionEnd = -1;
+    this._textarea.selectionStart = this._el.selectionEnd = -1;
+
+    if (this.options.editable !== true) {
+       // browser blocks copying to clipboard without this
+      setTimeout(function() {
+        this._textarea.style.display = 'none';
+      }.bind(this), 1)
+    }
   },
 
   _onMove: function() {

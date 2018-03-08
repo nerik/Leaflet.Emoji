@@ -99,12 +99,13 @@ var emoji = L.emoji(geoJSON, {
 var emoji = L.emoji(geoJSON, {
   emoji: function (feature) {
     if (!feature) {
-      return L.Emoji.EMPTY;
+      return '';
     }
     return L.Emoji.getShortcode(':flag_' + feature.properties.iso2.toLowerCase() + ':');
   }
 }).addTo(map);
 ```
+
 
 <img src="https://github.com/nerik/Leaflet.Emoji/blob/master/doc/doc_function.png">
 
@@ -113,3 +114,12 @@ var emoji = L.emoji(geoJSON, {
 To render whitespace, use `L.Emoji.EMPTY`
 
 To match a shortcode with an emoji, use `L.Emoji.getShortcode`.
+
+
+### Options
+
+__debug__ show underlying geoJSON polygons canvas.
+
+__editable__ use copy-pastable `textarea` instead of individual `<span>`s. When set to true, `emptyEmoji` will be `
+
+__emptyEmoji__ character used to fill in whitespace, defaults to `L.Emoji.EMPTY`

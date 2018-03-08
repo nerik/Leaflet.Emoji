@@ -18,12 +18,11 @@
         source: 'Natural Earth',
         url: 'demos/data/emoji_world_borders.topo.json',
         size: 18,
-        showGeoJSON: false,
         center: [50, 10],
         zoom: 4,
         emoji: function (feature) {
           if (!feature) {
-            return L.Emoji.EMPTY;
+            return '';
           }
           return L.Emoji.getShortcode(':flag_' + feature.properties.iso2.toLowerCase() + ':');
         }
@@ -34,7 +33,6 @@
         source: 'vividseats.com',
         url: 'demos/data/emoji_nfl.geojson',
         size: 18,
-        showGeoJSON: false,
         center: [40, -100],
         zoom: 4,
         useGeoJSON: true,
@@ -78,12 +76,11 @@
         source: 'IUCN',
         url: 'demos/data/emoji_iucn.topo.json',
         size: 18,
-        showGeoJSON: false,
         center: [0, 40],
         zoom: 3,
         emoji: function (feature) {
           if (!feature) {
-            return L.Emoji.EMPTY;
+            return '';
           }
           var max = 0;
           var maxType;
@@ -116,7 +113,6 @@
         source: 'Measure of America, 2013 - 2014 dataset',
         url: 'demos/data/emoji_us_states_hdi.geojson',
         size: 18,
-        showGeoJSON: true,
         useGeoJSON: true,
         center: [38, -85],
         zoom: 5,
@@ -134,18 +130,17 @@
         source: 'US Census 2010',
         url: 'demos/data/emoji_nyc.topo.json',
         size: 30,
-        showGeoJSON: false,
         center: [40.71, -73.98],
         zoom: 14,
         showBasemap: true,
         emoji: function (feature) {
           if (!feature) {
-            return L.Emoji.EMPTY;
+            return '';
           }
           var ethnicity = feature.properties.ethnic_1st;
           var medianAge = feature.properties.median_age;
           if (!ethnicity || ethnicity === 'other' || !medianAge) {
-            return L.Emoji.EMPTY;
+            return '';
           }
 
           var medianAgeIndex = 0;
@@ -165,7 +160,6 @@
         source: 'Natural Earth',
         url: 'demos/data/emoji_timezones.topo.json',
         size: 18,
-        showGeoJSON: true,
         center: [40, 0],
         zoom: 3,
         emoji: function (feature) {
@@ -191,7 +185,6 @@
         url: 'demos/data/emoji_landuse.geo.json',
         size: 18,
         useGeoJSON: true,
-        showGeoJSON: true,
         center: [46.1651,-1.3481],
         zoom: 14,
         showBasemap: false,
@@ -292,6 +285,7 @@
     document.querySelector('.js-copyBtn').addEventListener('click', function() {
       if (emoji) {
         console.warn(emoji.getGrid());
+        console.warn(emoji.getGridString());
         emoji.copyGrid();
       }
     });
