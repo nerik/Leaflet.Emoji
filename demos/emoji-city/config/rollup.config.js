@@ -2,9 +2,11 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 
 export default {
-  entry: 'demos/emoji-city/emoji-city.js',
-  format: 'iife',
-  dest: 'demos/emoji-city/emoji-city.dist.js',
+  input: 'demos/emoji-city/emoji-city.js',
+  output: {
+    file: 'demos/emoji-city/emoji-city.dist.js',
+    format: 'iife'
+  },
   plugins: [
     resolve({
       jsnext: true

@@ -86,12 +86,12 @@ var write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-var index$1 = {
+var ieee754 = {
 	read: read,
 	write: write
 };
 
-var index = Pbf;
+var pbf = Pbf;
 
 
 
@@ -107,8 +107,8 @@ Pbf.Fixed64 = 1; // 64-bit: double, fixed64, sfixed64
 Pbf.Bytes   = 2; // length-delimited: string, bytes, embedded messages, packed repeated fields
 Pbf.Fixed32 = 5; // 32-bit: float, fixed32, sfixed32
 
-var SHIFT_LEFT_32 = (1 << 16) * (1 << 16);
-var SHIFT_RIGHT_32 = 1 / SHIFT_LEFT_32;
+var SHIFT_LEFT_32 = (1 << 16) * (1 << 16),
+    SHIFT_RIGHT_32 = 1 / SHIFT_LEFT_32;
 
 Pbf.prototype = {
 
@@ -165,13 +165,13 @@ Pbf.prototype = {
     },
 
     readFloat: function() {
-        var val = index$1.read(this.buf, this.pos, true, 23, 4);
+        var val = ieee754.read(this.buf, this.pos, true, 23, 4);
         this.pos += 4;
         return val;
     },
 
     readDouble: function() {
-        var val = index$1.read(this.buf, this.pos, true, 52, 8);
+        var val = ieee754.read(this.buf, this.pos, true, 52, 8);
         this.pos += 8;
         return val;
     },
@@ -378,13 +378,13 @@ Pbf.prototype = {
 
     writeFloat: function(val) {
         this.realloc(4);
-        index$1.write(this.buf, val, this.pos, true, 23, 4);
+        ieee754.write(this.buf, val, this.pos, true, 23, 4);
         this.pos += 4;
     },
 
     writeDouble: function(val) {
         this.realloc(8);
-        index$1.write(this.buf, val, this.pos, true, 52, 8);
+        ieee754.write(this.buf, val, this.pos, true, 52, 8);
         this.pos += 8;
     },
 
@@ -708,7 +708,7 @@ function writeUtf8(buf, str, pos) {
     return pos;
 }
 
-var index$5 = Point;
+var pointGeometry = Point;
 
 function Point(x, y) {
     this.x = x;
@@ -838,9 +838,9 @@ Point.convert = function (a) {
     return a;
 };
 
-var vectortilefeature = VectorTileFeature$1;
+var vectortilefeature = VectorTileFeature;
 
-function VectorTileFeature$1(pbf, end, extent, keys, values) {
+function VectorTileFeature(pbf, end, extent, keys, values) {
     // Public
     this.properties = {};
     this.extent = extent;
@@ -872,9 +872,9 @@ function readTag(pbf, feature) {
     }
 }
 
-VectorTileFeature$1.types = ['Unknown', 'Point', 'LineString', 'Polygon'];
+VectorTileFeature.types = ['Unknown', 'Point', 'LineString', 'Polygon'];
 
-VectorTileFeature$1.prototype.loadGeometry = function() {
+VectorTileFeature.prototype.loadGeometry = function() {
     var pbf = this._pbf;
     pbf.pos = this._geometry;
 
@@ -904,7 +904,7 @@ VectorTileFeature$1.prototype.loadGeometry = function() {
                 line = [];
             }
 
-            line.push(new index$5(x, y));
+            line.push(new pointGeometry(x, y));
 
         } else if (cmd === 7) {
 
@@ -923,7 +923,7 @@ VectorTileFeature$1.prototype.loadGeometry = function() {
     return lines;
 };
 
-VectorTileFeature$1.prototype.bbox = function() {
+VectorTileFeature.prototype.bbox = function() {
     var pbf = this._pbf;
     pbf.pos = this._geometry;
 
@@ -962,12 +962,12 @@ VectorTileFeature$1.prototype.bbox = function() {
     return [x1, y1, x2, y2];
 };
 
-VectorTileFeature$1.prototype.toGeoJSON = function(x, y, z) {
+VectorTileFeature.prototype.toGeoJSON = function(x, y, z) {
     var size = this.extent * Math.pow(2, z),
         x0 = this.extent * x,
         y0 = this.extent * y,
         coords = this.loadGeometry(),
-        type = VectorTileFeature$1.types[this.type],
+        type = VectorTileFeature.types[this.type],
         i, j;
 
     function project(line) {
@@ -1068,9 +1068,9 @@ function signedArea(ring) {
     return sum;
 }
 
-var vectortilelayer = VectorTileLayer$1;
+var vectortilelayer = VectorTileLayer;
 
-function VectorTileLayer$1(pbf, end) {
+function VectorTileLayer(pbf, end) {
     // Public
     this.version = 1;
     this.name = null;
@@ -1117,7 +1117,7 @@ function readValueMessage(pbf) {
 }
 
 // return feature `i` from this layer as a `VectorTileFeature`
-VectorTileLayer$1.prototype.feature = function(i) {
+VectorTileLayer.prototype.feature = function(i) {
     if (i < 0 || i >= this._features.length) throw new Error('feature index out of bounds');
 
     this._pbf.pos = this._features[i];
@@ -1126,9 +1126,9 @@ VectorTileLayer$1.prototype.feature = function(i) {
     return new vectortilefeature(this._pbf, end, this.extent, this._keys, this._values);
 };
 
-var vectortile = VectorTile$1;
+var vectortile = VectorTile;
 
-function VectorTile$1(pbf, end) {
+function VectorTile(pbf, end) {
     this.layers = pbf.readFields(readTile, {}, end);
 }
 
@@ -1139,7 +1139,7 @@ function readTile(tag, layers, pbf) {
     }
 }
 
-var VectorTile = vectortile;
+var VectorTile$1 = vectortile;
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -1162,20 +1162,20 @@ var Symbol = _root.Symbol;
 var _Symbol = Symbol;
 
 /** Used for built-in method references. */
-var objectProto$1 = Object.prototype;
+var objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty$1 = objectProto$1.hasOwnProperty;
+var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * Used to resolve the
  * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
-var nativeObjectToString = objectProto$1.toString;
+var nativeObjectToString = objectProto.toString;
 
 /** Built-in value references. */
-var symToStringTag$1 = _Symbol ? _Symbol.toStringTag : undefined;
+var symToStringTag = _Symbol ? _Symbol.toStringTag : undefined;
 
 /**
  * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
@@ -1185,20 +1185,20 @@ var symToStringTag$1 = _Symbol ? _Symbol.toStringTag : undefined;
  * @returns {string} Returns the raw `toStringTag`.
  */
 function getRawTag(value) {
-  var isOwn = hasOwnProperty$1.call(value, symToStringTag$1),
-      tag = value[symToStringTag$1];
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
 
   try {
-    value[symToStringTag$1] = undefined;
+    value[symToStringTag] = undefined;
     var unmasked = true;
   } catch (e) {}
 
   var result = nativeObjectToString.call(value);
   if (unmasked) {
     if (isOwn) {
-      value[symToStringTag$1] = tag;
+      value[symToStringTag] = tag;
     } else {
-      delete value[symToStringTag$1];
+      delete value[symToStringTag];
     }
   }
   return result;
@@ -1207,14 +1207,14 @@ function getRawTag(value) {
 var _getRawTag = getRawTag;
 
 /** Used for built-in method references. */
-var objectProto$2 = Object.prototype;
+var objectProto$1 = Object.prototype;
 
 /**
  * Used to resolve the
  * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
-var nativeObjectToString$1 = objectProto$2.toString;
+var nativeObjectToString$1 = objectProto$1.toString;
 
 /**
  * Converts `value` to a string using `Object.prototype.toString`.
@@ -1230,11 +1230,11 @@ function objectToString(value) {
 var _objectToString = objectToString;
 
 /** `Object#toString` result references. */
-var nullTag = '[object Null]';
-var undefinedTag = '[object Undefined]';
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
 
 /** Built-in value references. */
-var symToStringTag = _Symbol ? _Symbol.toStringTag : undefined;
+var symToStringTag$1 = _Symbol ? _Symbol.toStringTag : undefined;
 
 /**
  * The base implementation of `getTag` without fallbacks for buggy environments.
@@ -1247,7 +1247,7 @@ function baseGetTag(value) {
   if (value == null) {
     return value === undefined ? undefinedTag : nullTag;
   }
-  return (symToStringTag && symToStringTag in Object(value))
+  return (symToStringTag$1 && symToStringTag$1 in Object(value))
     ? _getRawTag(value)
     : _objectToString(value);
 }
@@ -1287,10 +1287,10 @@ function isObject(value) {
 var isObject_1 = isObject;
 
 /** `Object#toString` result references. */
-var asyncTag = '[object AsyncFunction]';
-var funcTag = '[object Function]';
-var genTag = '[object GeneratorFunction]';
-var proxyTag = '[object Proxy]';
+var asyncTag = '[object AsyncFunction]',
+    funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    proxyTag = '[object Proxy]';
 
 /**
  * Checks if `value` is classified as a `Function` object.
@@ -1346,10 +1346,10 @@ function isMasked(func) {
 var _isMasked = isMasked;
 
 /** Used for built-in method references. */
-var funcProto$1 = Function.prototype;
+var funcProto = Function.prototype;
 
 /** Used to resolve the decompiled source of functions. */
-var funcToString$1 = funcProto$1.toString;
+var funcToString = funcProto.toString;
 
 /**
  * Converts `func` to its source code.
@@ -1361,7 +1361,7 @@ var funcToString$1 = funcProto$1.toString;
 function toSource(func) {
   if (func != null) {
     try {
-      return funcToString$1.call(func);
+      return funcToString.call(func);
     } catch (e) {}
     try {
       return (func + '');
@@ -1382,18 +1382,18 @@ var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
 var reIsHostCtor = /^\[object .+?Constructor\]$/;
 
 /** Used for built-in method references. */
-var funcProto = Function.prototype;
-var objectProto = Object.prototype;
+var funcProto$1 = Function.prototype,
+    objectProto$2 = Object.prototype;
 
 /** Used to resolve the decompiled source of functions. */
-var funcToString = funcProto.toString;
+var funcToString$1 = funcProto$1.toString;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
+var hasOwnProperty$1 = objectProto$2.hasOwnProperty;
 
 /** Used to detect if a method is native. */
 var reIsNative = RegExp('^' +
-  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
+  funcToString$1.call(hasOwnProperty$1).replace(reRegExpChar, '\\$&')
   .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
 );
 
@@ -2347,8 +2347,8 @@ L.VectorGrid = L.GridLayer.extend({
           reader.addEventListener('loadend', function() {
             // reader.result contains the contents of blob as a typed array
             // blob.type === 'application/x-protobuf'
-            var pbf = new index(reader.result);
-            var vt = new VectorTile(pbf);
+            var pbf$$1 = new pbf(reader.result);
+            var vt = new VectorTile$1(pbf$$1);
             return resolve(vt);
           });
           reader.readAsArrayBuffer(blob);
@@ -2431,12 +2431,12 @@ var vectorTileOptions = {
 };
 var vectorGrid = new L.VectorGrid(url, vectorTileOptions).addTo(map);
 
-L.Mapzen.apiKey = 'mapzen-C2oYTd7';
-var geocoder = L.Mapzen.geocoder({
-  expanded: true,
-  layers: ['coarse']
-});
-geocoder.addTo(map);
+// L.Mapzen.apiKey = 'mapzen-C2oYTd7';
+// var geocoder = L.Mapzen.geocoder({
+//   expanded: true,
+//   layers: ['coarse']
+// });
+// geocoder.addTo(map);
 
 
 var legend = document.querySelector('.js-legend');

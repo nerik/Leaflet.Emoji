@@ -142,12 +142,12 @@ var vectorTileOptions = {
 };
 var vectorGrid = new L.VectorGrid(url, vectorTileOptions).addTo(map);
 
-L.Mapzen.apiKey = 'mapzen-C2oYTd7';
-var geocoder = L.Mapzen.geocoder({
-  expanded: true,
-  layers: ['coarse']
-});
-geocoder.addTo(map);
+// L.Mapzen.apiKey = 'mapzen-C2oYTd7';
+// var geocoder = L.Mapzen.geocoder({
+//   expanded: true,
+//   layers: ['coarse']
+// });
+// geocoder.addTo(map);
 
 
 var legend = document.querySelector('.js-legend');

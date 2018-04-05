@@ -6,7 +6,7 @@
   "scripts": {
     "test": "eslint -c .eslintrc.js src/*.js demos/**/*.js",
     "build": "rollup -w -c ./config/rollup.config.js",
-    "build-demo-emoji-city": "rollup -w -c ./demos/emoji-city/config/rollup.config.js",
+    "build-demo-emoji-city": "rollup -c ./demos/emoji-city/config/rollup.config.js",
     "shortcodes": "./scripts/getShortcodesTable.js > src/shortcodes.js",
     "bundle": "npm run shortcodes && npm run build",
     "livereload": "live-reload --port 9091 .",
