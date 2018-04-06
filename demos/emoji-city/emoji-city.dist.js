@@ -2264,10 +2264,11 @@ var uniq_1 = uniq;
 
 var emojiLegend = {
   '⛱️': ['beach'],
-  '🏠': ['residential'],
+  '🏠': ['residential', 'allotments'],
   '🏜️': ['dune'],
   '🌱': ['grassland', 'grass', 'plant_nursery', 'greenhouse_horticulture'],
   '☘️': ['meadow'],
+  '🌷': ['village_green','flowerbed'],
   '🌿': ['scrub','heath'],
   '💧': ['water', 'basin', 'reservoir', 'lake', 'river'],
   '💦': ['wetland', 'salt_pond'],
@@ -2281,7 +2282,8 @@ var emojiLegend = {
   '⚙️': ['industrial'],
   '💰': ['commercial','retail'],
   '🗿': ['quarry'],
-  '✝️': ['cemetery'],
+  '💀️': ['cemetery'],
+  '🙏️': ['religious'],
   '🎒': ['kindergarten','school'],
   '🎓': ['college', 'university'],
   '🏥': ['hospital'],
@@ -2289,7 +2291,15 @@ var emojiLegend = {
   '🛤': ['railway'],
   '🏟': ['stadium'],
   '🎭': ['theatre'],
-  '🚧': ['construction']
+  '🚧': ['construction'],
+  '🏏️': ['playground','recreation_ground'],
+  '⚽️': ['pitch'],
+  '🚘️': ['parking', 'garages'],
+  '❄️': ['ice'],
+  '🔜': ['greenfield','brownfield'],
+  '🛢': ['landfill'],
+  '🐟': ['aquaculture'],
+  '🎸': ['rock']
 };
 
 var geoJSON = {

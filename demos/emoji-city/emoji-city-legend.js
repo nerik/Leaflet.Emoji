@@ -1,9 +1,10 @@
 export default {
   '⛱️': ['beach'],
-  '🏠': ['residential'],
+  '🏠': ['residential', 'allotments'],
   '🏜️': ['dune'],
   '🌱': ['grassland', 'grass', 'plant_nursery', 'greenhouse_horticulture'],
   '☘️': ['meadow'],
+  '🌷': ['village_green','flowerbed'],
   '🌿': ['scrub','heath'],
   '💧': ['water', 'basin', 'reservoir', 'lake', 'river'],
   '💦': ['wetland', 'salt_pond'],
@@ -17,7 +18,8 @@ export default {
   '⚙️': ['industrial'],
   '💰': ['commercial','retail'],
   '🗿': ['quarry'],
-  '✝️': ['cemetery'],
+  '💀️': ['cemetery'],
+  '🙏️': ['religious'],
   '🎒': ['kindergarten','school'],
   '🎓': ['college', 'university'],
   '🏥': ['hospital'],
@@ -25,5 +27,13 @@ export default {
   '🛤': ['railway'],
   '🏟': ['stadium'],
   '🎭': ['theatre'],
-  '🚧': ['construction']
+  '🚧': ['construction'],
+  '🏏️': ['playground','recreation_ground'],
+  '⚽️': ['pitch'],
+  '🚘️': ['parking', 'garages'],
+  '❄️': ['ice'],
+  '🔜': ['greenfield','brownfield'],
+  '🛢': ['landfill'],
+  '🐟': ['aquaculture'],
+  '🎸': ['rock']
 };

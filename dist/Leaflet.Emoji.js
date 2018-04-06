@@ -2634,7 +2634,6 @@ L.Emoji = L.Layer.extend({
         return options.emoji.emptyValue;
       }
     }
-    console.log(this.options.editable, EMPTY);
     return (this.options.editable === true) ? EMPTY : '';
   },
 
