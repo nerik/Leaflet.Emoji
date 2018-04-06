@@ -22,10 +22,11 @@
         zoom: 4,
         emoji: function (feature) {
           if (!feature) {
-            return '';
+            return null;
           }
           return L.Emoji.getShortcode(':flag_' + feature.properties.iso2.toLowerCase() + ':');
-        }
+        },
+        emojiFunctionEditableEmptyValue: L.Emoji.EMPTY
       },
       emoji_nfl: {
         name: 'NFL',
@@ -65,7 +66,6 @@
             'Buffalo Bills': '🐃',
             'Kansas City Chiefs': '🐺',
             'Chicago Bears': '🐻'
-
           }
         }
       },
@@ -80,7 +80,7 @@
         zoom: 3,
         emoji: function (feature) {
           if (!feature) {
-            return '';
+            return null;
           }
           var max = 0;
           var maxType;
@@ -104,7 +104,8 @@
             reptiles: '🐍',
             other_inverts: '🐝'
           }[maxType];
-        }
+        },
+        emojiFunctionEditableEmptyValue: L.Emoji.EMPTY
       },
       emoji_us_states_hdi: {
         name: 'US States HDI',
@@ -135,12 +136,12 @@
         showBasemap: true,
         emoji: function (feature) {
           if (!feature) {
-            return '';
+            return null;
           }
           var ethnicity = feature.properties.ethnic_1st;
           var medianAge = feature.properties.median_age;
           if (!ethnicity || ethnicity === 'other' || !medianAge) {
-            return '';
+            return null;
           }
 
           var medianAgeIndex = 0;
@@ -152,7 +153,8 @@
             'hispanic or latino': ['👶🏽', '👨🏽', '👴🏽'],
             'black': ['👶🏿', '👨🏿', '👴🏿']
           }[ethnicity][medianAgeIndex];
-        }
+        },
+        emojiFunctionEditableEmptyValue: L.Emoji.EMPTY
       },
       emoji_timezones: {
         name: 'Time zones',
@@ -176,7 +178,8 @@
             shortcode = ':clock' + Math.ceil(hour) + '30:';
           }
           return L.Emoji.getShortcode(shortcode);
-        }
+        },
+        emojiFunctionEditableEmptyValue: L.Emoji.EMPTY
       },
       emoji_landuse: {
         name: 'Landuse of Île de Ré, France',

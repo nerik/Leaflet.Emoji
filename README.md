@@ -99,10 +99,11 @@ var emoji = L.emoji(geoJSON, {
 var emoji = L.emoji(geoJSON, {
   emoji: function (feature) {
     if (!feature) {
-      return '';
+      return null;
     }
     return L.Emoji.getShortcode(':flag_' + feature.properties.iso2.toLowerCase() + ':');
-  }
+  },
+  emojiFunctionEditableEmptyValue: '◻'
 }).addTo(map);
 ```
 
@@ -111,7 +112,8 @@ var emoji = L.emoji(geoJSON, {
 
 `emoji` can be a function that will take the geoJSON feature as a parameter.
 
-To render whitespace, use `L.Emoji.EMPTY`
+To render white space, return null. In `editable` mode, you will need to specify a Unicode character to fill in the blank,
+by setting `emojiFunctionEditableEmptyValue` (to `L.Emoji.EMPTY` for instance)
 
 To match a shortcode with an emoji, use `L.Emoji.getShortcode`.
 

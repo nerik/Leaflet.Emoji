@@ -2392,8 +2392,9 @@ L.Emoji = L.Layer.extend({
     size: 18,
     emoji: '❓',
     emptyEmoji: EMPTY,
+    emojiFunctionEditableEmptyValue: EMPTY,
     tolerance: 1,
-    editable: false
+    editable: false,
   },
 
   initialize: function(geoJSON, options) {
@@ -2633,6 +2634,7 @@ L.Emoji = L.Layer.extend({
         return options.emoji.emptyValue;
       }
     }
+    console.log(this.options.editable, EMPTY);
     return (this.options.editable === true) ? EMPTY : '';
   },
 
@@ -2728,15 +2730,18 @@ var EmojiLayer = L.Layer.extend({
     this._el.style.height = h + 'px';
 
     this._grid = grid;
+    const editableEmptyValue = this.options.emojiFunctionEditableEmptyValue;
     this._gridString = this._grid.map(function(line) {
-      return line.join('');
+      return line.map(function(e) {
+        return (e === null) ? editableEmptyValue : e;
+      }).join('');
     }).join('\n');
     this._textarea.innerHTML = this._gridString;
 
     if (this.options.editable === false) {
       this._gridHTML = grid.map(function(line) {
         return line.map(function(e) {
-          return '<span>' + e + '</span>'
+          return '<span>' + ((e === null) ? '' : e) + '</span>'
         }).join('');
       }).join('<br>');
 
