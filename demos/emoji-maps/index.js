@@ -28,6 +28,96 @@
         },
         emojiFunctionEditableEmptyValue: L.Emoji.EMPTY
       },
+      emoji_alphabets: {
+        name: 'World writing systems',
+        description: 'A copy-pastable map of world writing systems!',
+        url: 'demos/data/emoji_world_borders.topo.json',
+        size: 12,
+        center: [50, 10],
+        zoom: 4,
+        emoji: function (feature) {
+          if (!feature) {
+            return null;
+          }
+          const country = feature.properties.iso2.toLowerCase();
+          const region = feature.properties.region;
+          const alphabets = {
+            latin: 'abcdefghijklmnopqrstuvwxyz',
+            cyrillic: 'абвгдежзийклмнопрстуфхцчшщъыьэюя',
+            greek: 'αβγδεζηθικλμνξοπρστυφχψω',
+            hebrew: 'אבגדהוזחטיךכלםמןנסעףפץצקרשתיִﬠﬡ',
+            arabic: 'شݐݼڗڛۻﻆݠﻋﻚݧﻬێﮅﮦﯞﭫﭵࢬ',
+            chinese: '且丙下丈更丁人全其刀龜瓦瓮三亼丮丩全厂勹二个又',
+            hindi: 'कखगथनळउआऎहॲडझचऀॿर',
+            japanese: 'あいうえおかきちにもむほふるゐゔぜぼ',
+            korean: '떢떆땎똓똅렋렁롭흡흕훤홤헙햰픾퓪푞',
+            thai: 'กขคฆงชฌญฏฒณทผพภมยฤฦษ',
+            burmese: 'ကခဂဃငစဆဇဈဉညဋဌဍဎဏတထဓနပဖဗဘမယဩ',
+            khmer: 'កខគឃងចឆជឈញដឋឌឍណតថទធនបផពភមយ',
+            lao: 'ກຂຄງຈຊຍດຕຖທນບຜຝພຟມຢຣລວສຫອຮໜໝຯະ',
+            ethiopic: 'ሀሄሐመሢሬሱቌቦቹኂኝኳዑዓዋጜጠ፤ፖ'
+          }
+          // console.log(country, feature.properties.name, region)
+          var getRandomChar = function(alphabet) { return alphabet[Math.floor(Math.random()*alphabet.length)]};
+          if (region === 19 || region === 9) { // americas, oceania
+            return getRandomChar(alphabets.latin);
+          }
+          if (region === 150) { //eurasia
+            if (['ru', 'ua', 'by', 'bg'].indexOf(country) > -1) {
+              return getRandomChar(alphabets.cyrillic);
+            }
+            if (country === 'gr') {
+              return getRandomChar(alphabets.greek);
+            }
+            return getRandomChar(alphabets.latin);
+          }
+          if (region === 2) { // africa
+            if (['dz','tn','ly','eg'].indexOf(country) > -1) {
+              return getRandomChar(alphabets.arabic);
+            }
+            if (country === 'et') {
+              return getRandomChar(alphabets.ethiopic);
+            }
+            return getRandomChar(alphabets.latin);
+          }
+          if (region === 142) { // asia
+            if (['sa','ye','om','jo','sy','iq','ir','af','pk','ps'].indexOf(country) > -1) {
+              return getRandomChar(alphabets.arabic);
+            }
+            if (['mn', 'kz', 'kg', 'tj'].indexOf(country) > -1) {
+              return getRandomChar(alphabets.cyrillic);
+            }
+            if (country === 'il') {
+              return getRandomChar(alphabets.hebrew);
+            }
+            if (country === 'in') {
+              return getRandomChar(alphabets.hindi);
+            }
+            if (country === 'cn') {
+              return getRandomChar(alphabets.chinese);
+            }
+            if (country === 'jp') {
+              return getRandomChar(alphabets.japanese);
+            }
+            if (country === 'kr' || country === 'kp') {
+              return getRandomChar(alphabets.korean);
+            }
+            if (country === 'mm') {
+              return getRandomChar(alphabets.burmese);
+            }
+            if (country === 'th') {
+              return getRandomChar(alphabets.thai);
+            }
+            if (country === 'kh') {
+              return getRandomChar(alphabets.khmer);
+            }
+            return getRandomChar(alphabets.latin);
+          }
+
+          return null;
+        },
+        emojiFunctionEditableEmptyValue: L.Emoji.EMPTY
+      },
       emoji_nfl: {
         name: 'NFL',
         description: 'Most popular NFL team by state',
@@ -277,7 +367,7 @@
       .then(function(payload) {
         var geoJSON = JSON.parse(payload);
         if (config.useGeoJSON !== true) {
-          geoJSON = topojson.feature(geoJSON, geoJSON.objects[mapId]);
+          geoJSON = topojson.feature(geoJSON, geoJSON.objects[(mapId === 'emoji_alphabets') ? 'emoji_world_borders' : mapId]);
         }
         emoji = L.emoji(geoJSON, config
       ).addTo(map);
