@@ -2,7 +2,6 @@ var EMPTY = '◻️';
 var RESOLUTION = 4;
 
 import shortcodes from './shortcodes';
-
 var getShortcode = function(emoji) {
   var shortcode = L.Emoji.SHORTCODES[emoji];
   if (shortcode) {
@@ -19,7 +18,7 @@ L.Emoji = L.Layer.extend({
     emptyEmoji: EMPTY,
     emojiFunctionEditableEmptyValue: EMPTY,
     tolerance: 1,
-    editable: false,
+    editable: false
   },
 
   initialize: function(geoJSON, options) {
@@ -146,7 +145,9 @@ L.Emoji = L.Layer.extend({
 
     this._finalCtx.fillStyle = 'black';
     this._finalCtx.fillRect(0, 0, finalWidth, finalHeight);
-    this._finalCtx.drawImage(ctx.canvas, 0, 0, viewportWidth, viewportHeight,
+
+    // the Math.min part is needed because of a Safari issue https://stackoverflow.com/questions/35500999/cropping-with-drawimage-not-working-in-safari
+    this._finalCtx.drawImage(ctx.canvas, 0, 0, Math.min(ctx.canvas.width, viewportWidth), Math.min(ctx.canvas.height, viewportHeight),
                                          0, 0, finalWidth / window.devicePixelRatio, finalHeight / window.devicePixelRatio);
 
     var imageData = this._finalCtx.getImageData(0, 0, finalWidth, finalHeight);
@@ -207,7 +208,7 @@ L.Emoji = L.Layer.extend({
       }
     }
 
-    console.log(performance.now()- t);
+    // console.log(performance.now()- t);
     this._layer.setGrid(emojiLines, viewportWidth, viewportHeight);
 
   },

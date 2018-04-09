@@ -56,7 +56,6 @@
             lao: 'ກຂຄງຈຊຍດຕຖທນບຜຝພຟມຢຣລວສຫອຮໜໝຯະ',
             ethiopic: 'ሀሄሐመሢሬሱቌቦቹኂኝኳዑዓዋጜጠ፤ፖ'
           }
-          // console.log(country, feature.properties.name, region)
           var getRandomChar = function(alphabet) { return alphabet[Math.floor(Math.random()*alphabet.length)]};
           if (region === 19 || region === 9) { // americas, oceania
             return getRandomChar(alphabets.latin);
