@@ -59,8 +59,8 @@ L.Emoji = L.Layer.extend({
     }
 
     var finalCanvas = L.DomUtil.create('canvas');
-    finalCanvas.setAttribute('width', 500);
-    finalCanvas.setAttribute('height', 500);
+    finalCanvas.setAttribute('width', 1000);
+    finalCanvas.setAttribute('height', 1000);
     this._finalCtx = finalCanvas.getContext('2d');
     this._finalCtx.mozImageSmoothingEnabled = false;
     this._finalCtx.webkitImageSmoothingEnabled = false;
@@ -133,9 +133,6 @@ L.Emoji = L.Layer.extend({
     // add the extra emoji to match the exact grid size
     viewportWidth += size - (viewportWidth % size);
     viewportHeight += size - (viewportHeight % size);
-    // console.log('size', size)
-    // console.log(viewportWidth, viewportHeight)
-
 
     if (ctx === undefined) {
       console.warn('canvas renderer not initialized yet');
@@ -150,7 +147,7 @@ L.Emoji = L.Layer.extend({
     this._finalCtx.fillStyle = 'black';
     this._finalCtx.fillRect(0, 0, finalWidth, finalHeight);
     this._finalCtx.drawImage(ctx.canvas, 0, 0, viewportWidth, viewportHeight,
-                                    0, 0, finalWidth, finalHeight);
+                                         0, 0, finalWidth / window.devicePixelRatio, finalHeight / window.devicePixelRatio);
 
     var imageData = this._finalCtx.getImageData(0, 0, finalWidth, finalHeight);
 
