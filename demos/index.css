@@ -10,6 +10,15 @@ html, body, #map {
   width: calc(100% - 400px);
 }
 
+body.fs #map {
+  width: 100%;
+}
+
+body.fs header {
+  display: none;
+}
+
+
 header {
   position: absolute;
   right: 0;

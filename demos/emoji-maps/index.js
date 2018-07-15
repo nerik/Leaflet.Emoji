@@ -130,24 +130,24 @@
           values: {
             'New York Giants': '🗽',
             'Arizona Cardinals': '✝️',
-            'San Diego Chargers': '⚡',
+            'San Diego Chargers': '⚡️',
             'Denver Broncos': '🐴',
             'Tampa Bay Buccaneers': '☠️',
             'San Francisco 49ers': '🔢',
-            'Detroit Lions': '🐅',
+            'Detroit Lions': '🦁',
             'Indianapolis Colts': '🔫',
             'Cincinnati Bengals': '🐯',
             'New Orleans Saints': '👼',
             'New England Patriots': '🇺🇸',
             'Minnesota Vikings': '🤘',
             'Carolina Panthers': '🐱',
-            'Dallas Cowboys': '🐮',
+            'Dallas Cowboys': '⭐️',
             'Green Bay Packers': '💚',
             'Pittsburgh Steelers': '🔩',
             'Washington Redskins': '🏹',
-            'Seattle Seahawks': '🐦',
-            'Philadelphia Eagles': '🐦',
-            'Atlanta Falcons': '🐦',
+            'Seattle Seahawks': '🦅',
+            'Philadelphia Eagles': '🦅',
+            'Atlanta Falcons': '🦅',
             'Baltimore Ravens': '🐦',
             'Tennessee Titans': '🐭',
             'Cleveland Browns': '🐶',
@@ -218,7 +218,7 @@
         legend: '<b>median age</b>:<br>👶 <30<br>👨 30-45<br>👴 >45<br><br><b>predominant ethnic group:</b><br>👨🏻 asian<br>👨🏼 caucasian<br>👨🏽 hispanic or latino<br>👨🏿 african american<br><br><b>summary</b><div class="biv-c"><span class="biv">&lt;35</span><span class="biv" style="left: 24px;">30-45</span><span class="biv" style="left: 48px;">&gt;45</span>👶🏻 👨🏻 👴🏻 &nbsp;&nbsp;asian<br>👶🏼 👨🏼 👴🏼 &nbsp;&nbsp;caucasian<br>👶🏽 👨🏽 👴🏽 &nbsp;&nbsp;hispanic or latino<br>👶🏿 👨🏿 👴🏿 &nbsp;&nbsp;african american</div>',
         source: 'US Census 2010',
         url: 'demos/data/emoji_nyc.topo.json',
-        size: 26,
+        size: 32,
         center: [40.71, -73.98],
         zoom: 14,
         showBasemap: true,
@@ -226,6 +226,7 @@
           if (!feature) {
             return null;
           }
+          console.log(feature.properties)
           var ethnicity = feature.properties.ethnic_1st;
           var medianAge = feature.properties.median_age;
           if (!ethnicity || ethnicity === 'other' || !medianAge) {
@@ -239,7 +240,7 @@
             'asian': ['👶🏻', '👨🏻', '👴🏻'],
             'white': ['👶🏼', '👨🏼', '👴🏼'],
             'hispanic or latino': ['👶🏽', '👨🏽', '👴🏽'],
-            'black': ['👶🏿', '👨🏿', '👴🏿']
+            'african american': ['👶🏿', '👨🏿', '👴🏿']
           }[ethnicity][medianAgeIndex];
         },
         emojiFunctionEditableEmptyValue: L.Emoji.EMPTY
