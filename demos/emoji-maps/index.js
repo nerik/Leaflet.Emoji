@@ -226,7 +226,6 @@
           if (!feature) {
             return null;
           }
-          console.log(feature.properties)
           var ethnicity = feature.properties.ethnic_1st;
           var medianAge = feature.properties.median_age;
           if (!ethnicity || ethnicity === 'other' || !medianAge) {
@@ -240,7 +239,7 @@
             'asian': ['👶🏻', '👨🏻', '👴🏻'],
             'white': ['👶🏼', '👨🏼', '👴🏼'],
             'hispanic or latino': ['👶🏽', '👨🏽', '👴🏽'],
-            'african american': ['👶🏿', '👨🏿', '👴🏿']
+            'black': ['👶🏿', '👨🏿', '👴🏿']
           }[ethnicity][medianAgeIndex];
         },
         emojiFunctionEditableEmptyValue: L.Emoji.EMPTY

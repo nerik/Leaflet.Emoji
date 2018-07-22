@@ -53,18 +53,23 @@ L.Emoji = L.Layer.extend({
 
     this._update(this._geoJSON);
 
-    if (this.options.debug === false) {
-      this._geoJSONRenderer._ctx.canvas.style.display = 'none';
-    }
-
+    
     var finalCanvas = L.DomUtil.create('canvas');
-    finalCanvas.setAttribute('width', 1000);
-    finalCanvas.setAttribute('height', 1000);
+    finalCanvas.setAttribute('width', 2000);
+    finalCanvas.setAttribute('height', 2000);
     this._finalCtx = finalCanvas.getContext('2d');
     this._finalCtx.mozImageSmoothingEnabled = false;
     this._finalCtx.webkitImageSmoothingEnabled = false;
     this._finalCtx.msImageSmoothingEnabled = false;
     this._finalCtx.imageSmoothingEnabled = false;
+    
+    if (this.options.debug === false) {
+      this._geoJSONRenderer._ctx.canvas.style.display = 'none';
+    } else {      
+      finalCanvas.style.position = 'absolute';
+      finalCanvas.style.top = 0;
+      document.body.appendChild(finalCanvas)
+    }
 
     this._layer = new EmojiLayer(this.options);
     this._layer.addTo(this._map);
@@ -126,12 +131,14 @@ L.Emoji = L.Layer.extend({
     var size = this.options.size;
 
     var ctx = this._geoJSONRenderer._ctx;
+    var dpi = window.devicePixelRatio;
     var viewportWidth = ctx.canvas.width;
     var viewportHeight = ctx.canvas.height;
+    var realCellSizePx = size * dpi;
 
     // add the extra emoji to match the exact grid size
-    viewportWidth += size - (viewportWidth % size);
-    viewportHeight += size - (viewportHeight % size);
+    viewportWidth += realCellSizePx - (viewportWidth % realCellSizePx);
+    viewportHeight += realCellSizePx - (viewportHeight % realCellSizePx);
 
     if (ctx === undefined) {
       console.warn('canvas renderer not initialized yet');
@@ -140,23 +147,24 @@ L.Emoji = L.Layer.extend({
 
     var t = performance.now();
 
-    var finalWidth = viewportWidth / RESOLUTION;
-    var finalHeight = viewportHeight / RESOLUTION;
+    var finalWidth = (viewportWidth / RESOLUTION) / dpi;
+    var finalHeight = (viewportHeight / RESOLUTION) / dpi;
 
     this._finalCtx.fillStyle = 'black';
     this._finalCtx.fillRect(0, 0, finalWidth, finalHeight);
 
     // the Math.min part is needed because of a Safari issue https://stackoverflow.com/questions/35500999/cropping-with-drawimage-not-working-in-safari
     this._finalCtx.drawImage(ctx.canvas, 0, 0, Math.min(ctx.canvas.width, viewportWidth), Math.min(ctx.canvas.height, viewportHeight),
-                                         0, 0, finalWidth / window.devicePixelRatio, finalHeight / window.devicePixelRatio);
+                                         0, 0, finalWidth, finalHeight);
 
+                                         
     var imageData = this._finalCtx.getImageData(0, 0, finalWidth, finalHeight);
 
     var emojiLines = [];
     var emojiLineColors = [];
     var cellWidth = size / RESOLUTION;
-    var numPixels = imageData.data.length / 4;
-    var numPixelsEmojiLine = finalWidth * cellWidth;
+    var numPixels = (imageData.data.length / 4);
+    var numPixelsEmojiLine = (finalWidth * cellWidth);
 
     for (var i = 0; i < numPixels; i++) {
       var arrOffset = i * 4;
@@ -207,7 +215,6 @@ L.Emoji = L.Layer.extend({
         emojiLineColors = [];
       }
     }
-
     // console.log(performance.now()- t);
     this._layer.setGrid(emojiLines, viewportWidth, viewportHeight);
 
