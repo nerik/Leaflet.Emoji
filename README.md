@@ -2,7 +2,9 @@
 
 Leaflet.emoji is a Leaflet plugin to render a layer into a emoji string.
 
- - <a href="https://nerik.github.io/Leaflet.Emoji/">Emoji Maps: thematic mapping witrh emojis <img src="https://github.com/nerik/Leaflet.Emoji/blob/master/doc/emoji_maps.png?raw=true"></a>
+<img src="https://github.com/nerik/Leaflet.Emoji/blob/master/doc/emoji2.gif?raw=true">
+
+ - <a href="https://nerik.github.io/Leaflet.Emoji/">Emoji Maps: thematic mapping with emojis <img src="https://github.com/nerik/Leaflet.Emoji/blob/master/doc/emoji_maps.png?raw=true"></a>
 
  - <a href="https://nerik.github.io/Leaflet.Emoji/demos/emoji-city">Emoji City: live OpenStreetMap data in emojis <img src="https://github.com/nerik/Leaflet.Emoji/blob/master/doc/emoji_city.png?raw=true"></a>
 
